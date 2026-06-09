@@ -1,6 +1,9 @@
 import requests 
-url = "https://www.smogon.com/stats/2026-03/gen9ou-1825.txt"
-r = requests.get(url)
+base_url = "https://pkmn.github.io/smogon/data"
+usage_url = f"{base_url}gen9ou.json"
 
-with open("gen9ou-1825.txt", "w") as f:
-    f.write(r.text)
+usage = requests.get(usage_url).json()
+print(usage.keys())
+
+
+
