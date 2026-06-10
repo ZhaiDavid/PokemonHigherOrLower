@@ -7,6 +7,7 @@ export default function RandomPokemonComponent ({pokemonKeys, pokemon, size}) {
                 setRandomPokemons(generateRandomPokemons());
                 }, []);
     const [randomPokemons, setRandomPokemons] = useState(null);
+    const [locked, setLocked] = useState(false);
     const [score, setScore] = useState(0);
 
 
@@ -27,13 +28,22 @@ export default function RandomPokemonComponent ({pokemonKeys, pokemon, size}) {
         for (const name of randomPokemons) {
             if (name === pokemonName) continue;
             if (pokemon[name]["usage"]["weighted"] > usage) {
-                setScore(0);
-                handleClick();
+                setLocked(true);
+                setTimeout(() => {
+                        setLocked(false);
+                        setScore(0);
+                        handleClick();
+                    }, 1000);
                 return;
             }
         }
-        setScore(score+1);
-        handleClick();
+
+        setLocked(true);
+        setTimeout(() => {
+                    setLocked(false);
+                    setScore(score+1);
+                    handleClick();
+                    }, 1000);
     }
         
     
@@ -48,12 +58,12 @@ export default function RandomPokemonComponent ({pokemonKeys, pokemon, size}) {
                                     Usage: {(pokemon[randomPokemon]["usage"]["weighted"] * 100).toFixed(2)}%
                                   </p>:
                                   <p>
-                                    Usage : ???
+                                    Usage : {!locked? "???": `${(pokemon[randomPokemon]["usage"]["weighted"]*100).toFixed(2)}%`}
                                   </p>}
                     
 
                     <img onClick = {() => {
-                        handleImageClick(randomPokemon);
+                        if (!locked) handleImageClick(randomPokemon);
                     }}
                     width="100px"
                     height = "100px"
