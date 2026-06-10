@@ -12,7 +12,7 @@ export default async function Page() {
                                                      pokemon[name]["usage"]["weighted"]*100 > 0.5);
     
     return (
-        <RandomPokemonComponent pokemonKeys={pokemonKeys} pokemon={pokemon}/>
+        <RandomPokemonComponent pokemonKeys={pokemonKeys} pokemon={pokemon} size = {2} />
     );
 }
 
