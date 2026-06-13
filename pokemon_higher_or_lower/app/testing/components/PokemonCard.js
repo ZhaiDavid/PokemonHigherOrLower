@@ -1,16 +1,20 @@
 import { colours } from '../constants/pokemon-type-colours.js'
 import { pokemon_types_map } from  '../constants/pokemon-type.js'
+import "./PokemonCard.css";
 
 export default function PokemonCard({randomPokemon, index, locked, usage, handleImageClick}) {
     const types = pokemon_types_map.get(randomPokemon.split(" ")
                         .join("-")
                         .toLowerCase());
-    console.log(types);
-    //document.documentElement.style.setProperty("--type-color", colours.get("primary_type"));
+    const primary_type = types[0].toLowerCase();
     return (
         <>
             
-            <div>
+            <div
+                className="card"
+                style={{
+                    "--type-color": colours.get(primary_type),
+                }}> 
                 <p>{randomPokemon}</p>
 
                 {index == 0 ? <p>
