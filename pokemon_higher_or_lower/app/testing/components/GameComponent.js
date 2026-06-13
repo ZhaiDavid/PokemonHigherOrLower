@@ -50,7 +50,7 @@ export default function GameComponent ({pokemonKeys, pokemon, size}) {
                     setScore(score+1);
                     if (score+1 > highScore) {
                         setHighScore(score+1);
-                        localStorage.setItem("high-score", score);
+                        localStorage.setItem("high-score", score+1);
                     }
                     handleClick();
                     }, 1000);
@@ -60,13 +60,15 @@ export default function GameComponent ({pokemonKeys, pokemon, size}) {
         <>  
             <p>High Score: {highScore}</p>
             <p>Score: {score}</p>
-            <p>Random {randomPokemons}</p>
-            <p>{pokemonKeys}</p>
             <div>
                 {randomPokemons !== null && randomPokemons.map((randomPokemon, index) => (
-                    <>
-                    <PokemonCard key={index} randomPokemon={randomPokemon} index={index} locked={locked} />
-                    </>
+                    <PokemonCard 
+                        key={index} 
+                        randomPokemon={randomPokemon} 
+                        index={index} 
+                        locked={locked}
+                        usage = {pokemon[randomPokemon]["usage"]["weighted"]}
+                        handleImageClick = {handleImageClick} />
                 ))}
             </div>
         </>

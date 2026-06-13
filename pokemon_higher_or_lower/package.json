@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
+    "@pkmn/dex": "^0.10.10",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.17.0",
