@@ -1,0 +1,28 @@
+.game-component {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: auto;
+
+    display: flex;
+    flex-flow: column;
+}
+
+.score-container {
+    position: fixed;
+    width: 100%;
+    bottom: 0px;
+
+    background-color: transparent;
+    color: white;
+
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between  ;
+    align-items: center;
+}
+
+.cards-container {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: auto;
+}

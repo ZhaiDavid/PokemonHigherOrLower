@@ -2,6 +2,8 @@
 import { useEffect, useState} from "react";
 import PokemonCard from "./PokemonCard";
 
+import './GameComponent.css'
+
 
 export default function GameComponent ({pokemonKeys, pokemon, size}) {
     useEffect(() => {
@@ -58,18 +60,22 @@ export default function GameComponent ({pokemonKeys, pokemon, size}) {
     
     return (
         <>  
-            <p>High Score: {highScore}</p>
-            <p>Score: {score}</p>
-            <div>
-                {randomPokemons !== null && randomPokemons.map((randomPokemon, index) => (
-                    <PokemonCard 
-                        key={index} 
-                        randomPokemon={randomPokemon} 
-                        index={index} 
-                        locked={locked}
-                        usage = {pokemon[randomPokemon]["usage"]["weighted"]}
-                        handleImageClick = {handleImageClick} />
-                ))}
+            <div className="game-component">
+                <div className="score-container px-4 py-2 text-lg font bold">
+                    <p className="p-2 bg-black">High Score: {highScore}</p>
+                    <p className="p-2 bg-black">Score: {score}</p>
+                </div>
+                <div className="cards-container grid grid-cols-1 sm:grid-cols-2">
+                    {randomPokemons !== null && randomPokemons.map((randomPokemon, index) => (
+                        <PokemonCard 
+                            key={index} 
+                            randomPokemon={randomPokemon} 
+                            index={index} 
+                            locked={locked}
+                            usage = {pokemon[randomPokemon]["usage"]["weighted"]}
+                            handleImageClick = {handleImageClick} />
+                    ))}
+                </div>
             </div>
         </>
     )

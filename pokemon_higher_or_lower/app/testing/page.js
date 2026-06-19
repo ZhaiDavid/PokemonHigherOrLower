@@ -1,6 +1,8 @@
 import SiteHeader from "./components/SiteHeader";
 import GameComponent from "./components/GameComponent";
 
+import "./page.css"
+
 export default async function Page() {
     const base_url = "https://pkmn.github.io/smogon/data";
     const usage_url = `${base_url}/stats/gen9ou.json`;
@@ -12,8 +14,10 @@ export default async function Page() {
     
     return (
         <>
-            <SiteHeader />
-            {pokemonKeys?.length > 0 && <GameComponent pokemonKeys={pokemonKeys} pokemon={pokemon} size = {2} />}
+            <div className="box">
+                <SiteHeader />
+                {pokemonKeys?.length > 0 && <GameComponent pokemonKeys={pokemonKeys} pokemon={pokemon} size = {2} />}
+            </div>
         </>
     );
 }
