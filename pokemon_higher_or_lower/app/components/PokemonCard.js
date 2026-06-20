@@ -25,9 +25,11 @@ export default function PokemonCard({randomPokemon, index, locked, usage, handle
                     </p>}
 
 
-                <img onClick={() => {
-                    if (!locked) handleImageClick(randomPokemon);
-                }}
+                <img
+                    className = "pokemonSprite"
+                    onClick={() => {
+                        if (!locked) handleImageClick(randomPokemon);
+                    }}
                     width="100px"
                     height="100px"
                     src={`https://www.smogon.com/dex/media/sprites/xy/${randomPokemon

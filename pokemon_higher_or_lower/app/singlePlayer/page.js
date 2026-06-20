@@ -1,5 +1,5 @@
-import SiteHeader from "./components/SiteHeader";
 import GameComponent from "./components/GameComponent";
+import SiteHeader from "../components/SiteHeader";
 
 export default async function Page() {
     const base_url = "https://pkmn.github.io/smogon/data";
@@ -12,9 +12,8 @@ export default async function Page() {
     
     return (
         <>
-            <SiteHeader />
-            {pokemonKeys?.length > 0 && <GameComponent pokemonKeys={pokemonKeys} pokemon={pokemon} size = {2} />}
+            <SiteHeader/>
+            {pokemonKeys.length > 0 && <GameComponent pokemonKeys={pokemonKeys} pokemon={pokemon} size = {2} />}
         </>
     );
 }
-

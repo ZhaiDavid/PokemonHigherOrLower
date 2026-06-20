@@ -1,0 +1,7 @@
+p {
+  color: var(--type-color);
+}
+
+.pokemonSprite {
+  height: 100px;
+}
