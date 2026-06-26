@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState} from "react";
-import PokemonCard from "./PokemonCard";
+import PokemonCard from "../../components/PokemonCard";
 
 import './GameComponent.css'
 
@@ -11,10 +11,12 @@ export default function GameComponent ({pokemonKeys, pokemon, size}) {
     }, [pokemonKeys]);
 
     useEffect(() => {
-        const localHighScore = localStorage.getItem("high-score")
-        setHighScore(localHighScore === null ? 0 : localHighScore)
+        const localHighScore = localStorage.getItem("high-score");
+        setHighScore(localHighScore === null ? 0 : localHighScore);
+
     }, [])
-        const [randomPokemons, setRandomPokemons] = useState(null);
+    
+    const [randomPokemons, setRandomPokemons] = useState(null);
     const [locked, setLocked] = useState(false);
     const [score, setScore] = useState(0);
     const [highScore, setHighScore] = useState(0);

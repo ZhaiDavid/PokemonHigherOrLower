@@ -1,5 +1,5 @@
-import SiteHeader from "./components/SiteHeader";
 import GameComponent from "./components/GameComponent";
+import SiteHeader from "../components/SiteHeader";
 
 import "./page.css"
 
@@ -21,4 +21,3 @@ export default async function Page() {
         </>
     );
 }
-
