@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import PokemonCard from "../../components/PokemonCard";
-import { socket } from "../../../lib/socketClient"
+import { socket } from "../../socket/socketClient"
 
 import "./GameComponent.css"
 

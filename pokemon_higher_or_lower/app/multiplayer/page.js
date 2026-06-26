@@ -4,7 +4,7 @@ import SiteHeader from '../components/SiteHeader';
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
-import { socket } from "../../lib/socketClient";
+import { socket } from "../socket/socketClient";
 
 export default function Page () {
   const params = useSearchParams();

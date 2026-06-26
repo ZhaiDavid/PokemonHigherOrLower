@@ -17,7 +17,8 @@ app.prepare().then(() => {
   const io = new Server(httpServer);
 
   io.on("connection", (socket) => {
-    console.log(`User connected ${socket.id}`);
+    const user_id = socket.handshake.auth.userId; 
+    console.log(`User connected ${user_id}`);
 
     socket.on("joined-room", async ({roomName, userName, numPokemon}) => {
       const base_url = "https://pkmn.github.io/smogon/data";
@@ -49,7 +50,7 @@ app.prepare().then(() => {
       roomState.players.push(socket.id);
       roomState.playerScores.set(socket.id, 0);
       socket.join(roomName);
-      console.log(`${userName} has joined the room`);
+      console.log(`${user_id} has joined the room`);
 
       console.log(roomState.pokemons);
 
