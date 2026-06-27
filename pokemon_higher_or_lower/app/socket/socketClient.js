@@ -1,7 +1,7 @@
 "use client"
 import { io } from 'socket.io-client';
 
-function getUserId() {
+export function getUserId() {
   let userId = localStorage.getItem("userId");
 
   if (!userId) {

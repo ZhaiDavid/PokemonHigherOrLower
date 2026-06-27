@@ -1,18 +1,33 @@
 "use client";
 import { useEffect, useState } from "react";
 import PokemonCard from "../../components/PokemonCard";
+import SubmitNotification from "../../components/SubmitNotification";
 import { socket } from "../../socket/socketClient"
 
 import "./GameComponent.css"
 
 
-export default function GameComponent({ startingPokemons, roomName, pokemonData }) {
+export default function GameComponent({ startingPokemons, roomName, pokemonData, playerScore }) {
   const [pokemons, setPokemons] = useState(startingPokemons);
-  const [score, setScore] = useState(0);
+  const [score, setScore] = useState(playerScore);
+  // when it's locked, we will also show a pop-up notif for when 
+  // someone submitted the answer
+  const [locked, setLocked] = useState(false); 
+  const [lastUserSubmitted, setLastUserSubmitted] = useState(null);
+  const [lastCorrect, setLastCorrect] = useState(null);
   useEffect(() => {
-    const handleRoomUpdate = ({ pokemons }) => {
-      setPokemons(pokemons);
+
+    // room is updated when one user submits an answer
+    const handleRoomUpdate = ({ pokemons, user }) => { 
+      setLocked(true);
+
+      setTimeout(() => {
+          setLocked(false);
+          setPokemons(pokemons);
+        }, 1000
+      );
     }
+
     socket.on("room-update", handleRoomUpdate);
 
     const handleScoreUpdate = ({ score }) => {
@@ -22,9 +37,18 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData 
 
     socket.on("score-update", handleScoreUpdate);
 
+    const handleUserSubmitted = ({user, answeredCorrectly}) => {
+      setLastUserSubmitted(user);
+      setLastCorrect(answeredCorrectly);
+      console.log(answeredCorrectly);
+    }
+
+    socket.on("user-submitted", handleUserSubmitted);
+
     return () => {
       socket.off("room-update", handleRoomUpdate);
       socket.off("score-update", handleScoreUpdate);
+      socket.off("user-submitted", handleUserSubmitted);
     }
   }, [])
 
@@ -41,7 +65,6 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData 
     }
 
     socket.emit("submit-answer", {
-      player: socket.id,
       roomName: roomName,
       answeredCorrectly: answerCorrectly(pokemon)
     })
@@ -50,6 +73,8 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData 
 
   return (
     <>
+        {locked && <SubmitNotification user = {lastUserSubmitted} s
+                                       correct = {lastCorrect}/>}
         <div className="game-component">
           <div className="score-container px-4 py-2 text-lg font bold">
             <p className="p-2 bg-black">Score: {score}</p>
@@ -60,7 +85,7 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData 
                 key={index}
                 randomPokemon={randomPokemon}
                 index={index}
-                locked={false}
+                locked={locked}
                 usage={pokemonData[randomPokemon]["usage"]["weighted"]}
                 handleImageClick={handleImageClick} />
             ))}

@@ -38,7 +38,6 @@ app.prepare().then(() => {
         rooms.set(roomName, {
           pokemons: [...set].map(num => pokemonKeys[num]),
           pokemonData: pokemonData,
-          players: [],
           pokemonKeys: pokemonKeys,
           playerScores: new Map(),
           numPokemon: numPokemon
@@ -47,26 +46,27 @@ app.prepare().then(() => {
 
       const roomState = rooms.get(roomName);
 
-      roomState.players.push(socket.id);
-      roomState.playerScores.set(socket.id, 0);
+      if (!roomState.playerScores.has(user_id)) {
+        roomState.playerScores.set(user_id, 0);
+      }
+
+
       socket.join(roomName);
       console.log(`${user_id} has joined the room`);
 
-      console.log(roomState.pokemons);
 
       socket.emit("room-state", {
         pokemons: roomState.pokemons,
         pokemonData: roomState.pokemonData,
-        pokemonKeys: roomState.pokemonKeys,
-        players: roomState.players,
-        playerScores: roomState.playerScores,
-        numPokemon: roomState.numPokemon
+        playerScore: roomState.playerScores.get(user_id)
       });
+
+      console.log(roomState.playerScores.get(user_id));
 
 
     })
 
-    socket.on("submit-answer", ({player, roomName, answeredCorrectly}) => {
+    socket.on("submit-answer", ({roomName, answeredCorrectly}) => {
       const roomState = rooms.get(roomName);
       const set = new Set();
        while (set.size < roomState.numPokemon) {
@@ -75,15 +75,24 @@ app.prepare().then(() => {
 
       roomState.pokemons = [...set].map(num => roomState.pokemonKeys[num]);
       if (answeredCorrectly) { 
-        roomState.playerScores.set(player, roomState.playerScores.get(player)+1);
+        roomState.playerScores.set(user_id, roomState.playerScores.get(user_id)+1);
       }
 
       io.to(roomName).emit("room-update", {
-        pokemons: roomState.pokemons,
+        pokemons: roomState.pokemons
       })
 
+      socket.to(roomName).emit("user-submitted", {
+        user: user_id,
+        answeredCorrectly: answeredCorrectly
+      })
+
+      console.log(user_id);
+      console.log(answeredCorrectly);
+
+
       socket.emit("score-update", {
-        score: roomState.playerScores.get(socket.id)
+        score: roomState.playerScores.get(user_id)
       })
 
     }) 

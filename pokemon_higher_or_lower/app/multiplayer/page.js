@@ -9,8 +9,7 @@ import { socket } from "../socket/socketClient";
 export default function Page () {
   const params = useSearchParams();
   const [pokemons, setPokemons] = useState(null);
-  const [pokemonKeys, setPokemonKeys] = useState(null);
-  const [players, setPlayers] = useState([]);
+  const [playerScore, setPlayerScore] = useState(null);
   const [pokemonData, setPokemonData] = useState([]);
   const roomName = params.get("roomName");
   const userName = params.get("userName");
@@ -23,11 +22,11 @@ export default function Page () {
       numPokemon: 2
     });
 
-    const handle_room_state = ({pokemons, pokemonData, pokemonKeys, players}) => {
+    const handle_room_state = ({pokemons, pokemonData, playerScore}) => {
       setPokemons(pokemons);
       setPokemonData(pokemonData);
-      setPokemonKeys(pokemonKeys);
-      setPlayers(players);
+      setPlayerScore(playerScore);
+      console.log(playerScore);
     };
 
     socket.on("room-state", handle_room_state);
@@ -46,6 +45,7 @@ export default function Page () {
         startingPokemons = {pokemons}
         pokemonData = {pokemonData}
         roomName = {roomName}
+        playerScore = {playerScore}
       />}
     </>
   )
