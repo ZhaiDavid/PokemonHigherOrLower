@@ -5,8 +5,21 @@ import { socket } from "../socket/socketClient";
 
 export default function Page() {
   const[userName, setUserName] = useState("");
-  const[searchClicked, setSearchClicked] = useState(false)
+  const[searchClicked, setSearchClicked] = useState(false);
+  const[inQueue, setInQueue] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+     socket.emit("in-matchmaking", {});
+     const handleInQueue = ({inQueue}) => {
+        setInQueue(inQueue)
+      }
+
+      socket.on("in-queue", handleInQueue);
+      return () => {
+        socket.off("in-queue", handleInQueue);
+      }
+  }, [])
 
 
   useEffect(() => {
@@ -19,6 +32,8 @@ export default function Page() {
         handle_match_found(roomName);
         socket.off("match-search", {});
       });
+
+
   
       return () => {
         socket.off("match-found", async ({roomName}) => {
@@ -31,7 +46,7 @@ export default function Page() {
   function submit() {
     if (!searchClicked) {
       socket.emit("match-search", {});
-      setSearchClicked(true);
+      setInQueue(true);
     }
   }
   
@@ -47,7 +62,7 @@ export default function Page() {
       <button onClick = {submit}>
         Find Match
       </button>
-      {searchClicked && <p>In Queue</p>}
+      {inQueue && <p>In Queue</p>}
     </>
   )
 }
