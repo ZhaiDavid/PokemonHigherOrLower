@@ -2,14 +2,16 @@
 import { io } from 'socket.io-client';
 
 export function getUserId() {
-  let userId = localStorage.getItem("userId");
+  if (typeof window !== 'undefined') {
+    let userId = localStorage.getItem("userId");
 
-  if (!userId) {
-    userId = crypto.randomUUID();
-    localStorage.setItem("userId", userId);
+    if (!userId) {
+      userId = crypto.randomUUID();
+      localStorage.setItem("userId", userId);
+    }
+
+    return userId;
   }
-
-  return userId;
 }
 
 console.log(getUserId());

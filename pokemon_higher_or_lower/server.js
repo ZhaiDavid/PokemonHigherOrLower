@@ -2,6 +2,8 @@ import { createServer } from "node:http";
 import next from "next";
 import { Server } from "socket.io";
 
+import Queue from './Queue.js'
+
 const rooms = new Map();
 
 const dev = process.env.NODE_ENV !== "production";
@@ -11,15 +13,61 @@ const port = 3000;
 const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();
 
+// Temporary function to create unique room ids
+// https://stackoverflow.com/questions/66946239/how-to-create-an-unique-room-room-id-in-socket-io-for-two-users
+function createRoomID(id1, id2) {
+  return id1.toString(10).padStart(10, "0") + id2.toString(10).padStart(10, "0")
+}
+
 app.prepare().then(() => {
   const httpServer = createServer(handler);
 
   const io = new Server(httpServer);
 
+  const queue = new Queue();
+
   io.on("connection", (socket) => {
     const user_id = socket.handshake.auth.userId; 
     console.log(`User connected ${user_id}`);
 
+    // Handling Matchmaking
+    socket.on("match-search", async () => {
+      queue.enqueue(socket);
+      // queue.enqueue([userName, socket]);
+      // console.log(`${socket.id} (${userName}) is in queue`)
+      // console.log(queue.print());
+
+      console.log(`${socket.id} is in queue`);
+      console.log(queue.print());
+      
+      if (queue.getSize() >= 2) {
+        // const [username1, socket1] = queue.dequeue();
+        // const [username2, socket2] = queue.dequeue();
+        
+        // socket1.emit("match-found", {
+        //   roomName: createRoomID(socket1.id, socket2.id),
+        //   userName: username1
+        // });
+        // socket2.emit("match-found", {
+        //   roomName: createRoomID(socket1.id, socket2.id),
+        //   userName: username2
+        // })
+        
+        const socket1 = queue.dequeue();
+        const socket2 = queue.dequeue();
+        
+        socket1.emit("match-found", {
+          roomName: createRoomID(socket1.id, socket2.id),
+        });
+        socket2.emit("match-found", {
+          roomName: createRoomID(socket1.id, socket2.id),
+        })
+
+        console.log(`Created room ${createRoomID(socket1.id, socket2.id)}`)
+      }
+    })
+
+    // Handling Room Joining
     socket.on("joined-room", async ({roomName, userName, numPokemon}) => {
       const base_url = "https://pkmn.github.io/smogon/data";
       const usage_url = `${base_url}/stats/gen9ou.json`;
@@ -62,10 +110,9 @@ app.prepare().then(() => {
       });
 
       console.log(roomState.playerScores.get(user_id));
-
-
     })
 
+    // Multiplayer Answer Submission
     socket.on("submit-answer", ({roomName, answeredCorrectly}) => {
       const roomState = rooms.get(roomName);
       const set = new Set();

@@ -1,0 +1,4 @@
+{
+    "watch": ["server.js", "Queue.js"],
+    "ignore": [".next/", "node_modules/"]
+}
