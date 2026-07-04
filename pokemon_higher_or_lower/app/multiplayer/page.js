@@ -26,7 +26,6 @@ export default function Page () {
       setPokemons(pokemons);
       setPokemonData(pokemonData);
       setPlayerScore(playerScore);
-      console.log(playerScore);
     };
 
     socket.on("room-state", handle_room_state);

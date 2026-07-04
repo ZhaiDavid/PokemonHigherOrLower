@@ -14,8 +14,6 @@ export function getUserId() {
   }
 }
 
-console.log(getUserId());
-
 export const socket = io("http://localhost:3000", {
   auth: {
     userId: getUserId()
