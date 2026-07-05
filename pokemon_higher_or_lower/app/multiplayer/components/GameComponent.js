@@ -13,6 +13,7 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
   // when it's locked, we will also show a pop-up notif for when 
   // someone submitted the answer
   const [locked, setLocked] = useState(false); 
+  const [showNotif, setShowNotif] = useState(false);
   const [lastUserSubmitted, setLastUserSubmitted] = useState(null);
   const [lastCorrect, setLastCorrect] = useState(null);
   useEffect(() => {
@@ -40,7 +41,10 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
     const handleUserSubmitted = ({user, answeredCorrectly}) => {
       setLastUserSubmitted(user);
       setLastCorrect(answeredCorrectly);
-      console.log(answeredCorrectly);
+      setShowNotif(true);
+      setTimeout(() => {
+        setShowNotif(false);
+      }, 1000);
     }
 
     socket.on("user-submitted", handleUserSubmitted);
@@ -73,7 +77,7 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
 
   return (
     <>
-        {locked && <SubmitNotification user = {lastUserSubmitted} s
+        {showNotif && <SubmitNotification user = {lastUserSubmitted}
                                        correct = {lastCorrect}/>}
         <div className="game-component">
           <div className="score-container px-4 py-2 text-lg font bold">

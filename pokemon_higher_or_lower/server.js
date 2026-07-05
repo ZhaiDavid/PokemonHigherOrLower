@@ -5,8 +5,7 @@ import { Server } from "socket.io";
 import Queue from './Queue.js'
 
 const rooms = new Map();
-let user_socket = new Map();
-
+const user_socket = new Map(); // maps every user_id in queue to its socket
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
 const port = 3000;
@@ -79,6 +78,12 @@ app.prepare().then(() => {
 
         console.log(`Created room ${createRoomID(socket1.id, socket2.id)}`)
       }
+    })
+
+    socket.on("in-matchmaking", () => {
+      socket.emit("in-queue", {
+        inQueue: user_socket.has(user_id)
+      })
     })
 
     // Handling Room Joining
