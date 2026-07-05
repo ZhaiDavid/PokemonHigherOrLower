@@ -5,6 +5,7 @@ import { Server } from "socket.io";
 import Queue from './Queue.js'
 
 const rooms = new Map();
+let user_socket = new Map();
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
@@ -32,15 +33,23 @@ app.prepare().then(() => {
 
     // Handling Matchmaking
     socket.on("match-search", async () => {
-      queue.enqueue(socket);
+      if (!user_socket.has(user_id)) {
+        queue.enqueue(user_id);
+      }
+
+      user_socket.set(user_id, socket);
+
+
       // queue.enqueue([userName, socket]);
       // console.log(`${socket.id} (${userName}) is in queue`)
       // console.log(queue.print());
 
-      console.log(`${socket.id} is in queue`);
-      console.log(queue.print());
+      console.log(`${user_id} is in queue`);
+      console.log(queue.getSize());
+      //console.log(queue.print())
       
       if (queue.getSize() >= 2) {
+        
         // const [username1, socket1] = queue.dequeue();
         // const [username2, socket2] = queue.dequeue();
         
@@ -53,8 +62,13 @@ app.prepare().then(() => {
         //   userName: username2
         // })
         
-        const socket1 = queue.dequeue();
-        const socket2 = queue.dequeue();
+        const user_id1 = queue.dequeue();
+        const user_id2 = queue.dequeue();
+        const socket1 = user_socket.get(user_id1);
+        const socket2 = user_socket.get(user_id2);
+        user_socket.delete(user_id1);
+        user_socket.delete(user_id2);
+
         
         socket1.emit("match-found", {
           roomName: createRoomID(socket1.id, socket2.id),

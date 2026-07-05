@@ -8,36 +8,49 @@ import SiteHeader from "../components/SiteHeader";
 import "./page.css"
 
 export default function Page() {
-  const [userName, setUserName] = useState("");
-  const [searchClicked, setSearchClicked] = useState(false)
+  const[userName, setUserName] = useState("");
+  const[searchClicked, setSearchClicked] = useState(false);
+  const[inQueue, setInQueue] = useState(false);
   const router = useRouter();
-  const socketRef = useRef(null);
 
   useEffect(() => {
-    socketRef.current = socket;
+     socket.emit("in-matchmaking", {});
+     const handleInQueue = ({inQueue}) => {
+        setInQueue(inQueue)
+      }
 
-    function handle_match_found(roomName) {
-      const query = new URLSearchParams({ roomName, userName }).toString();
-      router.push(`/multiplayer?${query}`);
-    };
+      socket.on("in-queue", handleInQueue);
+      return () => {
+        socket.off("in-queue", handleInQueue);
+      }
+  }, [])
 
-    socketRef.current.on("match-found", async ({ roomName }) => {
-      handle_match_found(roomName);
-      socketRef.current.off("match-search", {});
-    });
 
-    return () => {
-      socketRef.current.off("match-found", async ({ roomName }) => {
+  useEffect(() => {
+      function handle_match_found(roomName) {
+        const query = new URLSearchParams({ roomName, userName }).toString();
+        router.push(`/multiplayer?${query}`);
+      };
+      
+      socket.on("match-found", async ({roomName}) => {
         handle_match_found(roomName);
-        socketRef.current.off("match-search", {});
+        socket.off("match-search", {});
       });
-    };
+
+
+  
+      return () => {
+        socket.off("match-found", async ({roomName}) => {
+          handle_match_found(roomName);
+          socket.off("match-search", {});
+        });
+      };
   }, [router, userName]);
 
   function submit() {
-    if (socketRef.current && !searchClicked) {
-      socketRef.current.emit("match-search", {});
-      setSearchClicked(true);
+    if (!searchClicked) {
+      socket.emit("match-search", {});
+      setInQueue(true);
     }
   }
 
@@ -57,7 +70,7 @@ export default function Page() {
           <button onClick={submit} className="mt-2 p-3 rounded-sm bg-blue-300 hover:bg-[#56579A] hover:text-white">
             Find Match
           </button>
-          {searchClicked && <p>In Queue</p>}
+          {inQueue && <p>In Queue</p>}
         </div>
       </div>
     </div>
