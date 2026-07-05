@@ -1,11 +1,11 @@
 export default function SubmitNotification({ user, correct }) {
+  const message = correct ? `${user} got it right` : `${user} got it wrong`;
+
   return (
-    <>
-      {correct ? (
-        <p>{user} got it right</p>
-      ) : (
-        <p>{user} got it wrong</p>
-      )}
-    </>
+    <div className="submit-notification">
+      <div className="submit-notification__box">
+        <p className="submit-notification__text">{message}</p>
+      </div>
+    </div>
   );
 }

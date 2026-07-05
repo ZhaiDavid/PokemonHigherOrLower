@@ -7,6 +7,11 @@
     flex-flow: column;
 }
 
+/* make container a positioning context for the notification */
+.game-component {
+    position: relative;
+}
+
 .score-container {
     position: fixed;
     width: 100%;
@@ -25,4 +30,37 @@
     flex-grow: 1;
     flex-shrink: 1;
     flex-basis: auto;
+}
+
+/* Submit notification - top-right black box */
+.submit-notification {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    z-index: 50;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.submit-notification__box {
+    background: rgba(0,0,0,0.92);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+    animation: fadeOut 0.5s ease-in 0.5s forwards;
+}
+
+.submit-notification__text {
+    margin: 0;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
 }

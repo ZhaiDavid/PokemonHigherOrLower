@@ -77,9 +77,9 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
 
   return (
     <>
-        {showNotif && <SubmitNotification user = {lastUserSubmitted}
-                                       correct = {lastCorrect}/>}
         <div className="game-component">
+          {showNotif && <SubmitNotification user = {lastUserSubmitted}
+                                       correct = {lastCorrect}/>}
           <div className="score-container px-4 py-2 text-lg font bold">
             <p className="p-2 bg-black">Score: {score}</p>
           </div>
