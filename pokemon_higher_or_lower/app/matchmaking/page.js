@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import { socket } from "../socket/socketClient";
 
 import SiteHeader from "../components/SiteHeader";
+import MatchmakeLoader from "./components/MatchmakeLoader";
+
 
 import "./page.css"
 
@@ -59,18 +61,18 @@ export default function Page() {
       <SiteHeader />
       <div className="content-container">
         <div className="form-container p-10 rounded-md">
-          <form>
+          {!inQueue && <form>
             <input type="text"
               placeholder="type your username..."
               className="text-center"
               onChange={(event) => {
                 setUserName(event.target.value);
               }} />
-          </form>
-          <button onClick={submit} className="mt-2 p-3 rounded-sm bg-blue-300 hover:bg-[#56579A] hover:text-white">
+          </form>}
+          {!inQueue && <button onClick={submit} className="mt-2 p-3 rounded-sm bg-blue-300 hover:bg-[#56579A] hover:text-white">
             Find Match
-          </button>
-          {inQueue && <p>In Queue</p>}
+          </button>}
+          {inQueue && <MatchmakeLoader/>}
         </div>
       </div>
     </div>
