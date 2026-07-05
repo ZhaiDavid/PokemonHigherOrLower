@@ -22,3 +22,13 @@ p {
   /* display: block;
   max-width: 100%; */
 }
+
+.card-pokemon-label {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.card-pokemon-usage {
+  font-size: 1.5rem;
+  font-style: italic;
+}
