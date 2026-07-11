@@ -2,14 +2,15 @@
 import { useEffect, useState } from "react";
 import PokemonCard from "../../components/PokemonCard";
 import SubmitNotification from "../../components/SubmitNotification";
+import Scoreboard from "./Scoreboard";
 import { socket } from "../../socket/socketClient"
 
 import "./GameComponent.css"
 
 
-export default function GameComponent({ startingPokemons, roomName, pokemonData, playerScore }) {
+export default function GameComponent({ startingPokemons, roomName, pokemonData, playerScore, roomScore, playerUsernames }) {
   const [pokemons, setPokemons] = useState(startingPokemons);
-  const [score, setScore] = useState(playerScore);
+  // const [score, setScore] = useState(playerScore);
   // when it's locked, we will also show a pop-up notif for when 
   // someone submitted the answer
   const [locked, setLocked] = useState(false); 
@@ -31,12 +32,11 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
 
     socket.on("room-update", handleRoomUpdate);
 
-    const handleScoreUpdate = ({ score }) => {
-      console.log(score);
-      setScore(score);
-    }
+    // const handleScoreUpdate = ({ score}) => {
+    //   setScore(score);
+    // }
 
-    socket.on("score-update", handleScoreUpdate);
+    // socket.on("score-update", handleScoreUpdate);
 
     const handleUserSubmitted = ({user, answeredCorrectly}) => {
       setLastUserSubmitted(user);
@@ -51,7 +51,7 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
 
     return () => {
       socket.off("room-update", handleRoomUpdate);
-      socket.off("score-update", handleScoreUpdate);
+      // socket.off("score-update", handleScoreUpdate);
       socket.off("user-submitted", handleUserSubmitted);
     }
   }, [])
@@ -81,7 +81,8 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
           {showNotif && <SubmitNotification user = {lastUserSubmitted}
                                        correct = {lastCorrect}/>}
           <div className="score-container px-4 py-2 text-lg font bold">
-            <p className="p-2 bg-black">Score: {score}</p>
+            {/* <p className="p-2 bg-black">Score: {score}</p> */}
+            <Scoreboard userNames={playerUsernames} roomScores={roomScore}/>
           </div>
           <div className="cards-container grid grid-cols-1 sm:grid-cols-2">
             {pokemons !== null && pokemons.map((randomPokemon, index) => (

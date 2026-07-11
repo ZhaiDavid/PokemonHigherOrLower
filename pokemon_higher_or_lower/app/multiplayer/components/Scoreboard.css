@@ -1,0 +1,26 @@
+.scoreboard-container {
+    position: fixed;
+    width: 15rem;
+    bottom: 10px;
+
+    background-color: black;
+    color: white;
+
+    display: block;
+}
+
+.board-scores {
+
+}
+
+.score-content-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.content-username {
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    max-width: 10rem;
+}

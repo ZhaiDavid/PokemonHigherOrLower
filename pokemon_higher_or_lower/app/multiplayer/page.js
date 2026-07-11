@@ -11,6 +11,8 @@ export default function Page () {
   const [pokemons, setPokemons] = useState(null);
   const [playerScore, setPlayerScore] = useState(null);
   const [pokemonData, setPokemonData] = useState([]);
+  const [roomScores, setRoomScores] = useState(null);
+  const [playerUsernames, setPlayerUserNames] = useState(null)
   const roomName = params.get("roomName");
   const userName = params.get("userName");
 
@@ -22,10 +24,12 @@ export default function Page () {
       numPokemon: 2
     });
 
-    const handle_room_state = ({pokemons, pokemonData, playerScore}) => {
+    const handle_room_state = ({pokemons, pokemonData, playerScore, roomScores, playerUsernames}) => {
       setPokemons(pokemons);
       setPokemonData(pokemonData);
       setPlayerScore(playerScore);
+      setRoomScores(roomScores);
+      setPlayerUserNames(playerUsernames);
     };
 
     socket.on("room-state", handle_room_state);
@@ -45,6 +49,8 @@ export default function Page () {
         pokemonData = {pokemonData}
         roomName = {roomName}
         playerScore = {playerScore}
+        roomScore = {roomScores}
+        playerUsernames={playerUsernames}
       />}
     </>
   )

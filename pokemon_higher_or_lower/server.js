@@ -107,6 +107,7 @@ app.prepare().then(() => {
           pokemonData: pokemonData,
           pokemonKeys: pokemonKeys,
           playerScores: new Map(),
+          playerUsernames: new Map(),
           numPokemon: numPokemon
         });
       }
@@ -117,18 +118,26 @@ app.prepare().then(() => {
         roomState.playerScores.set(user_id, 0);
       }
 
+      if (!roomState.playerUsernames.has(user_id)) {
+        const username = userName == undefined ? "Anonymous" : userName;
+        roomState.playerUsernames.set(user_id, username);
+      }
+
 
       socket.join(roomName);
       console.log(`${user_id} has joined the room`);
 
+      console.log(roomState.playerScores.get(user_id));
+      console.log(roomState.playerScores);
+      console.log(roomState.playerUsernames);
 
       socket.emit("room-state", {
         pokemons: roomState.pokemons,
         pokemonData: roomState.pokemonData,
-        playerScore: roomState.playerScores.get(user_id)
+        playerScore: roomState.playerScores.get(user_id),
+        roomScores: Array.from(roomState.playerScores),
+        playerUsernames: Array.from(roomState.playerUsernames)
       });
-
-      console.log(roomState.playerScores.get(user_id));
     })
 
     // Multiplayer Answer Submission
@@ -158,7 +167,8 @@ app.prepare().then(() => {
 
 
       socket.emit("score-update", {
-        score: roomState.playerScores.get(user_id)
+        score: roomState.playerScores.get(user_id),
+        roomScores: Object.fromEntries(roomState.playerScores)
       })
 
     }) 
