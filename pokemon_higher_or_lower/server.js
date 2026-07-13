@@ -65,8 +65,10 @@ app.prepare().then(() => {
         const user_id2 = queue.dequeue();
         const socket1 = user_socket.get(user_id1);
         const socket2 = user_socket.get(user_id2);
-        user_socket.delete(user_id1);
-        user_socket.delete(user_id2);
+
+        // Need to figure out when it is appropriate to delete the user from the socket map
+        // user_socket.delete(user_id1);
+        // user_socket.delete(user_id2);
 
         
         socket1.emit("match-found", {
@@ -106,6 +108,7 @@ app.prepare().then(() => {
           pokemons: [...set].map(num => pokemonKeys[num]),
           pokemonData: pokemonData,
           pokemonKeys: pokemonKeys,
+          playerIDs: new Set(),
           playerScores: new Map(),
           playerUsernames: new Map(),
           numPokemon: numPokemon
@@ -114,11 +117,16 @@ app.prepare().then(() => {
 
       const roomState = rooms.get(roomName);
 
+      if (!roomState.playerIDs.has(user_id)) {
+          roomState.playerIDs.add(user_id);
+      }
+
       if (!roomState.playerScores.has(user_id)) {
         roomState.playerScores.set(user_id, 0);
       }
 
       if (!roomState.playerUsernames.has(user_id)) {
+        // TODO: Figure out why the Anonymous isn't working when the user doesn't enter a username
         const username = userName == undefined ? "Anonymous" : userName;
         roomState.playerUsernames.set(user_id, username);
       }
@@ -127,10 +135,6 @@ app.prepare().then(() => {
       socket.join(roomName);
       console.log(`${user_id} has joined the room`);
 
-      console.log(roomState.playerScores.get(user_id));
-      console.log(roomState.playerScores);
-      console.log(roomState.playerUsernames);
-
       socket.emit("room-state", {
         pokemons: roomState.pokemons,
         pokemonData: roomState.pokemonData,
@@ -138,6 +142,23 @@ app.prepare().then(() => {
         roomScores: Array.from(roomState.playerScores),
         playerUsernames: Array.from(roomState.playerUsernames)
       });
+
+      // Emitting Score Update to each room upon joining to display all users on scoreboard
+      if (roomState.playerIDs.size > 1) {
+        roomState.playerIDs.forEach((id) => {
+          if (user_socket.get(id)) {
+            console.log("SENT " + id);
+            console.log(roomState.playerScores);
+            user_socket.get(id).emit("score-update", {
+              score: roomState.playerScores.get(user_id),
+              roomScore: Object.fromEntries(roomState.playerScores)
+            })
+          }
+          else {
+            console.log("Error");
+          }
+        })
+      }
     })
 
     // Multiplayer Answer Submission
@@ -166,9 +187,22 @@ app.prepare().then(() => {
       console.log(answeredCorrectly);
 
 
-      socket.emit("score-update", {
-        score: roomState.playerScores.get(user_id),
-        roomScores: Object.fromEntries(roomState.playerScores)
+      // socket.emit("score-update", {
+      //   score: roomState.playerScores.get(user_id),
+      //   : Object.fromEntries(roomState.playerScores)
+      // })
+      console.log(user_socket);
+      roomState.playerIDs.forEach((id) => {
+        if (user_socket.get(id)) {
+          console.log("SENT " + id);
+          user_socket.get(id).emit("score-update", {
+            score: roomState.playerScores.get(user_id),
+            roomScore: Object.fromEntries(roomState.playerScores)
+          })
+        }
+        else {
+          console.log("Error");
+        }
       })
 
     }) 

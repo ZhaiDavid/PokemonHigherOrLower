@@ -9,11 +9,10 @@ export default function Scoreboard({ userNames, roomScores }) {
     const [scores, setScores] = useState(new Map(roomScores));
 
     useEffect(() => {
-        console.log("TESTING ENTRY");
-        console.log(userNames);
-        console.log(roomScores);
-        const handleScoreUpdate = ({ score, roomScores }) => {
-            setScores(new Map(Object.entries(roomScores)));
+        const handleScoreUpdate = ({ score, roomScore }) => {
+            console.log(roomScore);
+            setScores(new Map(Object.entries(roomScore)));
+            console.log(scores);
         }
         
         socket.on("score-update", handleScoreUpdate);
@@ -21,7 +20,7 @@ export default function Scoreboard({ userNames, roomScores }) {
         return () => {
             socket.off("score-update", handleScoreUpdate);
         }
-    })
+    }, [])
 
     return (
         <div className="scoreboard-container p-2 rounded-md">
