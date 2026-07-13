@@ -38,7 +38,6 @@ app.prepare().then(() => {
 
       user_socket.set(user_id, socket);
 
-
       // queue.enqueue([userName, socket]);
       // console.log(`${socket.id} (${userName}) is in queue`)
       // console.log(queue.print());
@@ -98,6 +97,9 @@ app.prepare().then(() => {
       const pokemonKeys = Object.keys(pokemonData).filter((name) => 
                                       pokemonData[name]["usage"]["weighted"]*100 > 0.5);
 
+      // Also setting the socket map here in case the user doesn't join through the queue
+      user_socket.set(user_id, socket);
+
       const set = new Set();
       while (set.size < numPokemon) {
         set.add(Math.floor(Math.random() * pokemonKeys.length));
@@ -126,8 +128,9 @@ app.prepare().then(() => {
       }
 
       if (!roomState.playerUsernames.has(user_id)) {
-        // TODO: Figure out why the Anonymous isn't working when the user doesn't enter a username
-        const username = userName == undefined ? "Anonymous" : userName;
+        console.log("USERNAME");
+        console.log(userName);
+        const username = (userName == "" ? "Anonymous" : userName);
         roomState.playerUsernames.set(user_id, username);
       }
 
@@ -145,6 +148,7 @@ app.prepare().then(() => {
 
       // Emitting Score Update to each room upon joining to display all users on scoreboard
       if (roomState.playerIDs.size > 1) {
+        console.log("MORE THAN 2 PLAYERS");
         roomState.playerIDs.forEach((id) => {
           if (user_socket.get(id)) {
             console.log("SENT " + id);
@@ -191,7 +195,6 @@ app.prepare().then(() => {
       //   score: roomState.playerScores.get(user_id),
       //   : Object.fromEntries(roomState.playerScores)
       // })
-      console.log(user_socket);
       roomState.playerIDs.forEach((id) => {
         if (user_socket.get(id)) {
           console.log("SENT " + id);

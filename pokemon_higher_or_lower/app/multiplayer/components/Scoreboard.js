@@ -8,10 +8,10 @@ export default function Scoreboard({ userNames, roomScores }) {
     const usernames = new Map(userNames);
     const [scores, setScores] = useState(new Map(roomScores));
 
-    useEffect(() => {
+    useEffect(() => { 
         const handleScoreUpdate = ({ score, roomScore }) => {
-            console.log(roomScore);
             setScores(new Map(Object.entries(roomScore)));
+            console.log("SCORES");
             console.log(scores);
         }
         

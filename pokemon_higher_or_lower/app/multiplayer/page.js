@@ -30,6 +30,7 @@ export default function Page () {
       setPlayerScore(playerScore);
       setRoomScores(roomScores);
       setPlayerUserNames(playerUsernames);
+      console.log(playerUsernames);
     };
 
     socket.on("room-state", handle_room_state);
