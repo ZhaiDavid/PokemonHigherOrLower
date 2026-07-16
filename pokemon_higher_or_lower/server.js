@@ -19,12 +19,28 @@ function createRoomID(id1, id2) {
   return id1.toString(10).padStart(10, "0") + id2.toString(10).padStart(10, "0")
 }
 
+// Separating into functions so that I can reuse
+function changeRoomPokemon(roomName, io) {
+    const roomState = rooms.get(roomName);
+    const set = new Set();
+      while (set.size < roomState.numPokemon) {
+      set.add(Math.floor(Math.random() * roomState.pokemonKeys.length));
+    }
+
+    roomState.pokemons = [...set].map(num => roomState.pokemonKeys[num]);
+
+    io.to(roomName).emit("room-update", {
+      pokemons: roomState.pokemons
+    })
+}
+
 app.prepare().then(() => {
   const httpServer = createServer(handler);
 
   const io = new Server(httpServer);
 
   const queue = new Queue();
+  const gameTimerMap = new Map();
 
   io.on("connection", (socket) => {
     const user_id = socket.handshake.auth.userId; 
@@ -162,25 +178,24 @@ app.prepare().then(() => {
             console.log("Error");
           }
         })
+
+        // Run Timer if more than one player
+        function changePokemonInterval() {
+          changeRoomPokemon(roomName, io);
+        }
+        gameTimerMap.set(roomName, setInterval(changePokemonInterval, 5000));
       }
     })
 
     // Multiplayer Answer Submission
     socket.on("submit-answer", ({roomName, answeredCorrectly}) => {
+      clearInterval(gameTimerMap.get(roomName));
       const roomState = rooms.get(roomName);
-      const set = new Set();
-       while (set.size < roomState.numPokemon) {
-        set.add(Math.floor(Math.random() * roomState.pokemonKeys.length));
-      }
+      changeRoomPokemon(roomName, io);
 
-      roomState.pokemons = [...set].map(num => roomState.pokemonKeys[num]);
       if (answeredCorrectly) { 
         roomState.playerScores.set(user_id, roomState.playerScores.get(user_id)+1);
       }
-
-      io.to(roomName).emit("room-update", {
-        pokemons: roomState.pokemons
-      })
 
       socket.to(roomName).emit("user-submitted", {
         user: user_id,
@@ -208,6 +223,11 @@ app.prepare().then(() => {
         }
       })
 
+      // Re-adding timer
+      function changePokemonInterval() {
+        changeRoomPokemon(roomName, io);
+      }
+      gameTimerMap.set(roomName, setInterval(changePokemonInterval, 5000));
     }) 
 
   });
