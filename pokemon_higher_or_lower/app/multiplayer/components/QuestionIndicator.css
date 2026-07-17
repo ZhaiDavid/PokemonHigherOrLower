@@ -1,0 +1,10 @@
+.question-indicator-container {
+    max-width: 6rem;
+
+    background-color: black;
+    color: white;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

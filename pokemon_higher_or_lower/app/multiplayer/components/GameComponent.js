@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import PokemonCard from "../../components/PokemonCard";
 import SubmitNotification from "../../components/SubmitNotification";
 import Scoreboard from "./Scoreboard";
+import QuestionIndicator from "./QuestionIndicator";
 import { socket } from "../../socket/socketClient"
 
 import "./GameComponent.css"
@@ -17,11 +18,13 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
   const [showNotif, setShowNotif] = useState(false);
   const [lastUserSubmitted, setLastUserSubmitted] = useState(null);
   const [lastCorrect, setLastCorrect] = useState(null);
+  const [questionNumber, setQuestionNumber] = useState(1);
   useEffect(() => {
 
     // room is updated when one user submits an answer
-    const handleRoomUpdate = ({ pokemons, user }) => { 
+    const handleRoomUpdate = ({ pokemons, questionNumber }) => { 
       setLocked(true);
+      setQuestionNumber(questionNumber);
 
       setTimeout(() => {
           setLocked(false);
@@ -83,6 +86,9 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
           <div className="score-container px-4 py-2 text-lg font bold">
             {/* <p className="p-2 bg-black">Score: {score}</p> */}
             <Scoreboard userNames={playerUsernames} roomScores={roomScore}/>
+          </div>
+          <div className="question-indicator px-4 py-2">
+            <QuestionIndicator questionNumber={questionNumber}/>
           </div>
           <div className="cards-container grid grid-cols-1 sm:grid-cols-2">
             {pokemons !== null && pokemons.map((randomPokemon, index) => (

@@ -29,8 +29,12 @@ function changeRoomPokemon(roomName, io) {
 
     roomState.pokemons = [...set].map(num => roomState.pokemonKeys[num]);
 
+    // Incrementing Question Number
+    roomState.questionNumber += 1;
+
     io.to(roomName).emit("room-update", {
-      pokemons: roomState.pokemons
+      pokemons: roomState.pokemons,
+      questionNumber: roomState.questionNumber
     })
 }
 
@@ -129,7 +133,8 @@ app.prepare().then(() => {
           playerIDs: new Set(),
           playerScores: new Map(),
           playerUsernames: new Map(),
-          numPokemon: numPokemon
+          numPokemon: numPokemon,
+          questionNumber: 1
         });
       }
 
@@ -144,8 +149,6 @@ app.prepare().then(() => {
       }
 
       if (!roomState.playerUsernames.has(user_id)) {
-        console.log("USERNAME");
-        console.log(userName);
         const username = (userName == "" ? "Anonymous" : userName);
         roomState.playerUsernames.set(user_id, username);
       }
@@ -159,7 +162,8 @@ app.prepare().then(() => {
         pokemonData: roomState.pokemonData,
         playerScore: roomState.playerScores.get(user_id),
         roomScores: Array.from(roomState.playerScores),
-        playerUsernames: Array.from(roomState.playerUsernames)
+        playerUsernames: Array.from(roomState.playerUsernames),
+        questionNumber: roomState.questionNumber
       });
 
       // Emitting Score Update to each room upon joining to display all users on scoreboard

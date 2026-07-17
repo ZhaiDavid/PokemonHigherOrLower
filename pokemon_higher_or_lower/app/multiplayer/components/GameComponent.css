@@ -22,7 +22,7 @@
 
     display: flex;
     flex-flow: row;
-    justify-content: space-between  ;
+    justify-content: space-between ;
     align-items: center;
 }
 
@@ -30,6 +30,14 @@
     flex-grow: 1;
     flex-shrink: 1;
     flex-basis: auto;
+}
+
+.question-indicator {
+    position: fixed;
+    width: 15rem;
+    top: 3.5rem;
+
+    display: block;
 }
 
 /* Submit notification - top-right black box */
