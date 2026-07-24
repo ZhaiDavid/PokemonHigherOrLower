@@ -1,4 +1,4 @@
-import GameComponent from "./components/GameComponent";
+import GameComponent from "./_components/GameComponent";
 
 import "./page.css"
 

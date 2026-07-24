@@ -1,10 +1,10 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from 'next/navigation';
-import { socket } from "../socket/socketClient";
+import { socket } from "../../socket/socketClient";
 
-import MatchmakeLoader from "./components/MatchmakeLoader";
-
+import { modesList } from "../../constants/modes";
+import MatchmakeLoader from "./_components/MatchmakeLoader";
 
 import "./page.css"
 
@@ -37,8 +37,6 @@ export default function Page() {
         handle_match_found(roomName);
         socket.off("match-search", {});
       });
-
-
   
       return () => {
         socket.off("match-found", async ({roomName}) => {
@@ -48,9 +46,13 @@ export default function Page() {
       };
   }, [router, userName]);
 
-  function submit() {
+  function submit(event) {
+    event.preventDefault();
+    const data = new FormData(event.target);
+    const format = data.get('mode')
+
     if (!searchClicked) {
-      socket.emit("match-search", {});
+      socket.emit("match-search", format, {});
       setInQueue(true);
     }
   }
@@ -59,17 +61,25 @@ export default function Page() {
     <div className="box">
       <div className="content-container">
         <div className="form-container p-10 rounded-md">
-          {!inQueue && <form>
+          {!inQueue && <form onSubmit={submit}>
             <input type="text"
               placeholder="type your username..."
               className="text-center"
               onChange={(event) => {
                 setUserName(event.target.value);
               }} />
-          </form>}
-          {!inQueue && <button onClick={submit} className="mt-2 p-3 rounded-sm bg-blue-300 hover:bg-[#56579A] hover:text-white">
+            <div className="mt-3 flex flex-col items-center">
+              <label className="" htmlFor="modes">Choose a Mode</label>
+              <select className="mt-2" id="modes" name="mode">
+                {modesList.map((element, index) => (
+                  <option key={element} value={element}>{element}</option>
+                ))}
+              </select>
+            </div>
+            <button type="submit" className="mt-3 p-3 rounded-sm bg-blue-300 hover:bg-[#56579A] hover:text-white">
             Find Match
-          </button>}
+          </button>
+          </form>}
           {inQueue && <MatchmakeLoader/>}
         </div>
       </div>

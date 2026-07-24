@@ -48,7 +48,7 @@ export default function MobileNav() {
                             <DropdownMenuContent>
                                 <DropdownMenuGroup>
                                     <DropdownMenuItem>
-                                        <Link href="/singlePlayer">
+                                        <Link href="/singlePlayer/menu">
                                             Single-player
                                         </Link>
                                     </DropdownMenuItem>
@@ -57,12 +57,12 @@ export default function MobileNav() {
                                 <DropdownMenuGroup>
                                     <DropdownMenuLabel>Multi-player</DropdownMenuLabel>
                                     <DropdownMenuItem>
-                                        <Link href="/matchmaking">
+                                        <Link href="/multiplayer/matchmaking">
                                             Find Match
                                         </Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem>
-                                        <Link href="/form">
+                                        <Link href="/multiplayer/form">
                                             Form
                                         </Link>
                                     </DropdownMenuItem>

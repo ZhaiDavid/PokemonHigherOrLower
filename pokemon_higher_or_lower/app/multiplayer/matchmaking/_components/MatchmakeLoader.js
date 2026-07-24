@@ -1,5 +1,5 @@
 import "./MatchmakeLoader.js";
-import Loading from "../../components/Loading";
+import Loading from "../../../_components/Loading.js";
 
 export default function MatchmakeLoader({ userName}) {
     return (

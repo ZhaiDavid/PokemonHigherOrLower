@@ -21,7 +21,7 @@ body {
     justify-content: center;
     align-items: center;
 
-    background: url("../..//public/bg-starfield.jpg");
+    background: url("/bg-starfield.jpg");
     background-size: cover;
     background-repeat: repeat-x;
 }

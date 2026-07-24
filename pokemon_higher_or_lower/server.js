@@ -3,6 +3,7 @@ import next from "next";
 import { Server } from "socket.io";
 
 import Queue from './Queue.js'
+import { modesList } from "./app/constants/modes.js";
 
 const rooms = new Map();
 const user_socket = new Map(); // maps every user_id in queue to its socket
@@ -43,7 +44,12 @@ app.prepare().then(() => {
 
   const io = new Server(httpServer);
 
-  const queue = new Queue();
+  // Separate map of queues for each format, so they players can queue up for their desired format
+  const queueMap = new Map();
+  modesList.forEach((format, index) => {
+    queueMap[format] = new Queue();
+  })
+
   const gameTimerMap = new Map();
 
   io.on("connection", (socket) => {
@@ -51,44 +57,22 @@ app.prepare().then(() => {
     console.log(`User connected ${user_id}`);
 
     // Handling Matchmaking
-    socket.on("match-search", async () => {
+    socket.on("match-search", async (format) => {
       if (!user_socket.has(user_id)) {
-        queue.enqueue(user_id);
+        queueMap[format].enqueue(user_id);
       }
 
       user_socket.set(user_id, socket);
 
-      // queue.enqueue([userName, socket]);
-      // console.log(`${socket.id} (${userName}) is in queue`)
-      // console.log(queue.print());
-
       console.log(`${user_id} is in queue`);
-      console.log(queue.getSize());
-      //console.log(queue.print())
+      console.log(queueMap[format].getSize());
       
-      if (queue.getSize() >= 2) {
+      if (queueMap[format].getSize() >= 2) {
         
-        // const [username1, socket1] = queue.dequeue();
-        // const [username2, socket2] = queue.dequeue();
-        
-        // socket1.emit("match-found", {
-        //   roomName: createRoomID(socket1.id, socket2.id),
-        //   userName: username1
-        // });
-        // socket2.emit("match-found", {
-        //   roomName: createRoomID(socket1.id, socket2.id),
-        //   userName: username2
-        // })
-        
-        const user_id1 = queue.dequeue();
-        const user_id2 = queue.dequeue();
+        const user_id1 = queueMap[format].dequeue();
+        const user_id2 = queueMap[format].dequeue();
         const socket1 = user_socket.get(user_id1);
         const socket2 = user_socket.get(user_id2);
-
-        // Need to figure out when it is appropriate to delete the user from the socket map
-        // user_socket.delete(user_id1);
-        // user_socket.delete(user_id2);
-
         
         socket1.emit("match-found", {
           roomName: createRoomID(socket1.id, socket2.id),

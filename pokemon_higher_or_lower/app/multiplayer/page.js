@@ -1,5 +1,5 @@
 "use client"
-import GameComponent from './components/GameComponent';
+import GameComponent from './_components/GameComponent';
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";

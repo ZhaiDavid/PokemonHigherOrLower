@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import PokemonCard from "../../components/PokemonCard";
-import SubmitNotification from "../../components/SubmitNotification";
+import PokemonCard from "../../_components/PokemonCard";
+import SubmitNotification from "../../_components/SubmitNotification";
 import Scoreboard from "./Scoreboard";
 import QuestionIndicator from "./QuestionIndicator";
 import { socket } from "../../socket/socketClient"
