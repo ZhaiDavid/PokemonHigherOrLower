@@ -1,11 +1,13 @@
 import GameComponent from "./components/GameComponent";
-import SiteHeader from "../components/SiteHeader";
 
 import "./page.css"
 
-export default async function Page() {
+export default async function Page({ params }) {
+    const param = await params;
+    const mode = param.slug
+
     const base_url = "https://pkmn.github.io/smogon/data";
-    const usage_url = `${base_url}/stats/gen9ou.json`;
+    const usage_url = `${base_url}/stats/${mode}.json`;
     const data = await fetch(usage_url);
     const readData = await data.json();
     const pokemon = readData['pokemon'];
@@ -15,7 +17,6 @@ export default async function Page() {
     return (
         <>
             <div className="box">
-                <SiteHeader />
                 {pokemonKeys?.length > 0 && <GameComponent pokemonKeys={pokemonKeys} pokemon={pokemon} size = {2} />}
             </div>
         </>

@@ -1,0 +1,40 @@
+/* General Page Formatting */
+html,
+body {
+    height: 100%;
+    margin: 0;
+}
+
+.box {
+    display: flex;  
+    flex-flow: column;
+    height: 100%;
+}
+
+.content-container {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: auto;
+
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+
+    background: url("../../../public/bg-starfield.jpg");
+    background-size: cover;
+    background-repeat: repeat-x;
+}
+
+.form-container {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+
+    background-color: gainsboro;
+}
+
+.form-mode-select {
+    display: block;
+}

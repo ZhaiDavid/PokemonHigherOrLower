@@ -3,7 +3,6 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from 'next/navigation';
 import { socket } from "../socket/socketClient";
 
-import SiteHeader from "../components/SiteHeader";
 import MatchmakeLoader from "./components/MatchmakeLoader";
 
 
@@ -58,7 +57,6 @@ export default function Page() {
 
   return (
     <div className="box">
-      <SiteHeader />
       <div className="content-container">
         <div className="form-container p-10 rounded-md">
           {!inQueue && <form>

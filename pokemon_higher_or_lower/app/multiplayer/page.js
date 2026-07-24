@@ -1,6 +1,5 @@
 "use client"
 import GameComponent from './components/GameComponent';
-import SiteHeader from '../components/SiteHeader';
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
@@ -44,7 +43,6 @@ export default function Page () {
 
   return (
     <>
-      <SiteHeader />
       {pokemons && <GameComponent
         startingPokemons = {pokemons}
         pokemonData = {pokemonData}

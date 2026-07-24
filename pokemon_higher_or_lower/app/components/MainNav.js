@@ -1,4 +1,5 @@
 // Navigation Bar made using tutorial from blog post https://dev.to/shaikathaque/responsive-navbar-in-react-using-shadcnui-and-tailwind-css-4jc9
+//TODO: Fix the navbar to correct structure
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
