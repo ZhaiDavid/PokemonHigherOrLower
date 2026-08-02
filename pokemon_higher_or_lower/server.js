@@ -33,6 +33,35 @@ function changeRoomPokemon(roomName, io) {
     // Incrementing Question Number
     roomState.questionNumber += 1;
 
+    // Check if game is ended
+    if (roomState.questionNumber > 15) {
+      // Check which ID has the most people
+      let maxScoreID = "";
+      let maxScore = Number.MIN_SAFE_INTEGER;
+
+      roomState.playerIDs.forEach((id) => {
+        let score = roomState.playerScores.get(id);
+        if (score > maxScore) {
+          maxScore = score;
+          maxScoreID = id;
+        }
+      })
+
+      roomState.playerIDs.forEach((id) => {
+        if (user_socket.get(id)) {
+          user_socket.get(id).emit("game-over");
+          if (id == maxScoreID) {
+            user_socket.get(id).emit("win");
+          }
+        }
+        else {
+          console.log("Error");
+        }
+      })
+
+      //  TODO: Remove room and usersockets
+    }
+
     io.to(roomName).emit("room-update", {
       pokemons: roomState.pokemons,
       questionNumber: roomState.questionNumber

@@ -18,9 +18,6 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-
-const mainNavItems = ['Leaderboard', 'Usage Stats', 'Meta Trends']
-
 export default function MainNav() {
     return (
         <>
@@ -54,12 +51,6 @@ export default function MainNav() {
                         </DropdownMenuGroup>
                     </DropdownMenuContent>
                 </DropdownMenu>
-
-                {mainNavItems.map((item, index) => (
-                    <Button key={index} variant="link" className="text-white font-sans">
-                        {item}
-                    </Button>
-                ))}
             </div>
         </>
     )

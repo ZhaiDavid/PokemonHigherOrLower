@@ -1,5 +1,6 @@
 "use client"
 import GameComponent from './_components/GameComponent';
+import ResultComponent from './_components/ResultComponent';
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
@@ -14,6 +15,8 @@ export default function Page () {
   const [playerUsernames, setPlayerUserNames] = useState(null)
   const roomName = params.get("roomName");
   const userName = params.get("userName");
+  const [gameOver, setGameOver] = useState(false);
+  const [hasWon, setHasWon] = useState(false);
 
   // for some reason useEffect runs twice
   useEffect(() => {
@@ -32,23 +35,40 @@ export default function Page () {
       console.log(playerUsernames);
     };
 
+    const handle_gameover = () => {
+      setGameOver(true);
+    }
+
+    const handle_win = () => {
+      setHasWon(true);
+    }
+
     socket.on("room-state", handle_room_state);
+    socket.on("game-over", handle_gameover);
+    socket.on("win", handle_win);
 
 
     return () => {
         socket.off("room-state", handle_room_state);
+        socket.off("game-over", handle_gameover);
+        socket.off("win", handle_win)
     };
   }, []);
 
 
   return (
     <>
-      {pokemons && <GameComponent
+      {pokemons && !gameOver && <GameComponent
         startingPokemons = {pokemons}
         pokemonData = {pokemonData}
         roomName = {roomName}
         playerScore = {playerScore}
         roomScore = {roomScores}
+        playerUsernames={playerUsernames}
+      />}
+      {gameOver && <ResultComponent 
+        hasWon={hasWon}
+        roomScore={roomScores}
         playerUsernames={playerUsernames}
       />}
     </>

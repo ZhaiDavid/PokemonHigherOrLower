@@ -23,8 +23,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-const mobileItems = ['Leaderboard', 'Usage Stats', 'Meta Trends']
-
 export default function MobileNav() {
     const [open, setOpen] = useState(false);
 
@@ -69,14 +67,6 @@ export default function MobileNav() {
                                 </DropdownMenuGroup>
                             </DropdownMenuContent>
                         </DropdownMenu>
-
-                        {mobileItems.map((item, index) => (
-                            <Button key={index} variant="link" className="text-white font-sans" onClick={() => {
-                                setOpen(false);
-                            }}>
-                                {item}
-                            </Button>
-                        ))}
                     </div>
                 </SheetContent>
             </Sheet>
