@@ -200,7 +200,11 @@ app.prepare().then(() => {
         function changePokemonInterval() {
           changeRoomPokemon(roomName, io);
         }
-        gameTimerMap.set(roomName, setInterval(changePokemonInterval, 5000));
+        setTimeout(
+          () => {
+            changePokemonInterval();
+            gameTimerMap.set(roomName, setInterval(changePokemonInterval, 6000));
+          }, 5000);
       }
     })
 
@@ -244,7 +248,7 @@ app.prepare().then(() => {
       function changePokemonInterval() {
         changeRoomPokemon(roomName, io);
       }
-      gameTimerMap.set(roomName, setInterval(changePokemonInterval, 5000));
+      gameTimerMap.set(roomName, setInterval(changePokemonInterval, 6000));
     }) 
 
   });
