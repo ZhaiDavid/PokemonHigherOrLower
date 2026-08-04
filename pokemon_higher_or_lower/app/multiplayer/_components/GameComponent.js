@@ -19,11 +19,11 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
   const [lastUserSubmitted, setLastUserSubmitted] = useState(null);
   const [lastCorrect, setLastCorrect] = useState(null);
   const [questionNumber, setQuestionNumber] = useState(1);
-  const [seconds, setSeconds] = useState(5000);
+  const [seconds, setSeconds] = useState(5);
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setSeconds(prev => locked ? prev : prev - 50);
-    }, 50);
+      setSeconds(prev => locked ? prev : prev - 1);
+    }, 1000);
 
     return () => clearInterval(intervalId); 
   }, [locked]); 
@@ -32,7 +32,7 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
     // room is updated when one user submits an answer
     const handleRoomUpdate = ({ pokemons, questionNumber }) => { 
       setLocked(true);
-      setSeconds(5000);
+      setSeconds(5);
       setQuestionNumber(questionNumber);
 
       setTimeout(() => {
@@ -92,7 +92,9 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
         <div className="game-component">
           {showNotif && <SubmitNotification user = {lastUserSubmitted}
                                        correct = {lastCorrect}/>}
-          {seconds}
+          <div className = "timer">
+              {seconds}
+          </div>
           <div className="score-container px-4 py-2 text-lg font bold">
             {/* <p className="p-2 bg-black">Score: {score}</p> */}
 
