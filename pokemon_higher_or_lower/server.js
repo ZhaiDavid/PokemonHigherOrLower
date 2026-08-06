@@ -21,7 +21,7 @@ function createRoomID(id1, id2) {
 }
 
 // Separating into functions so that I can reuse
-function changeRoomPokemon(roomName, io) {
+function changeRoomPokemon(roomName, gameTimerMap, io) {
     const roomState = rooms.get(roomName);
     const set = new Set();
       while (set.size < roomState.numPokemon) {
@@ -35,6 +35,10 @@ function changeRoomPokemon(roomName, io) {
 
     // Check if game is ended
     if (roomState.questionNumber > 15) {
+      if (gameTimerMap.has(roomName)) {
+        clearInterval(gameTimerMap.get(roomName));
+      }
+
       // Check which ID has the most people
       let maxScoreID = "";
       let maxScore = Number.MIN_SAFE_INTEGER;
@@ -61,11 +65,12 @@ function changeRoomPokemon(roomName, io) {
 
       //  TODO: Remove room and usersockets
     }
-
-    io.to(roomName).emit("room-update", {
-      pokemons: roomState.pokemons,
-      questionNumber: roomState.questionNumber
-    })
+    else {
+      io.to(roomName).emit("room-update", {
+        pokemons: roomState.pokemons,
+        questionNumber: roomState.questionNumber
+      })
+    }
 }
 
 app.prepare().then(() => {
@@ -198,7 +203,7 @@ app.prepare().then(() => {
 
         // Run Timer if more than one player
         function changePokemonInterval() {
-          changeRoomPokemon(roomName, io);
+          changeRoomPokemon(roomName, gameTimerMap, io);
         }
         setTimeout(
           () => {
@@ -212,7 +217,7 @@ app.prepare().then(() => {
     socket.on("submit-answer", ({roomName, answeredCorrectly}) => {
       clearInterval(gameTimerMap.get(roomName));
       const roomState = rooms.get(roomName);
-      changeRoomPokemon(roomName, io);
+      changeRoomPokemon(roomName, gameTimerMap, io);
 
       if (answeredCorrectly) { 
         roomState.playerScores.set(user_id, roomState.playerScores.get(user_id)+1);
@@ -246,7 +251,7 @@ app.prepare().then(() => {
 
       // Re-adding timer
       function changePokemonInterval() {
-        changeRoomPokemon(roomName, io);
+        changeRoomPokemon(roomName, gameTimerMap, io);
       }
       gameTimerMap.set(roomName, setInterval(changePokemonInterval, 6000));
     }) 

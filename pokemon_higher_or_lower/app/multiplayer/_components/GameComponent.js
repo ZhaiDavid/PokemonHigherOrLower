@@ -7,6 +7,7 @@ import QuestionIndicator from "./QuestionIndicator";
 import { socket } from "../../socket/socketClient"
 
 import "./GameComponent.css"
+import ResultComponent from "./ResultComponent";
 
 
 export default function GameComponent({ startingPokemons, roomName, pokemonData, playerScore, roomScore, playerUsernames }) {
@@ -14,32 +15,35 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
   // const [score, setScore] = useState(playerScore);
   // when it's locked, we will also show a pop-up notif for when 
   // someone submitted the answer
-  const [locked, setLocked] = useState(false); 
+  const [locked, setLocked] = useState(false);
   const [showNotif, setShowNotif] = useState(false);
   const [lastUserSubmitted, setLastUserSubmitted] = useState(null);
   const [lastCorrect, setLastCorrect] = useState(null);
   const [questionNumber, setQuestionNumber] = useState(1);
   const [seconds, setSeconds] = useState(5000);
+  const [gameOver, setGameOver] = useState(false);
+  const [hasWon, setHasWon] = useState(false);
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       setSeconds(prev => locked ? prev : prev - 50);
     }, 50);
 
-    return () => clearInterval(intervalId); 
-  }, [locked]); 
+    return () => clearInterval(intervalId);
+  }, [locked]);
 
   useEffect(() => {
     // room is updated when one user submits an answer
-    const handleRoomUpdate = ({ pokemons, questionNumber }) => { 
+    const handleRoomUpdate = ({ pokemons, questionNumber }) => {
       setLocked(true);
       setSeconds(5000);
       setQuestionNumber(questionNumber);
 
       setTimeout(() => {
-          setLocked(false);
-          setPokemons(pokemons);
-        }, 1000
-      );
+        setLocked(false);
+        setPokemons(pokemons);
+      }, 1000
+      );  
     }
 
     socket.on("room-update", handleRoomUpdate);
@@ -50,7 +54,7 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
 
     // socket.on("score-update", handleScoreUpdate);
 
-    const handleUserSubmitted = ({user, answeredCorrectly}) => {
+    const handleUserSubmitted = ({ user, answeredCorrectly }) => {
       setLastUserSubmitted(user);
       setLastCorrect(answeredCorrectly);
       setShowNotif(true);
@@ -59,12 +63,25 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
       }, 1000);
     }
 
+    const handle_gameover = () => {
+      setGameOver(true);
+      setLocked(true);
+    }
+
+    const handle_win = () => {
+      setHasWon(true);
+    }
+
     socket.on("user-submitted", handleUserSubmitted);
+    socket.on("game-over", handle_gameover);
+    socket.on("win", handle_win);
 
     return () => {
       socket.off("room-update", handleRoomUpdate);
       // socket.off("score-update", handleScoreUpdate);
       socket.off("user-submitted", handleUserSubmitted);
+      socket.off("game-over", handle_gameover);
+      socket.off("win", handle_win);
     }
   }, [])
 
@@ -89,30 +106,32 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
 
   return (
     <>
-        <div className="game-component">
-          {showNotif && <SubmitNotification user = {lastUserSubmitted}
-                                       correct = {lastCorrect}/>}
-          {seconds}
-          <div className="score-container px-4 py-2 text-lg font bold">
-            {/* <p className="p-2 bg-black">Score: {score}</p> */}
+      <div className="game-component relative">
+        {showNotif && <SubmitNotification user={lastUserSubmitted}
+          correct={lastCorrect} />}
+        {seconds}
+        <div className="score-container px-4 py-2 text-lg font bold">
+          {/* <p className="p-2 bg-black">Score: {score}</p> */}
 
-            <Scoreboard userNames={playerUsernames} roomScores={roomScore}/>
-          </div>
-          <div className="question-indicator px-4 py-2">
-            <QuestionIndicator questionNumber={questionNumber}/>
-          </div>
-          <div className="cards-container grid grid-cols-1 sm:grid-cols-2">
-            {pokemons !== null && pokemons.map((randomPokemon, index) => (
-              <PokemonCard
-                key={index}
-                randomPokemon={randomPokemon}
-                index={index}
-                locked={locked}
-                usage={pokemonData[randomPokemon]["usage"]["weighted"]}
-                handleImageClick={handleImageClick} />
-            ))}
-          </div>
+          <Scoreboard userNames={playerUsernames} roomScores={roomScore} />
         </div>
+        <div className="question-indicator px-4 py-2">
+          <QuestionIndicator questionNumber={questionNumber} />
+        </div>
+        <div className="cards-container grid grid-cols-1 sm:grid-cols-2">
+          {pokemons !== null && pokemons.map((randomPokemon, index) => (
+            <PokemonCard
+              key={index}
+              randomPokemon={randomPokemon}
+              index={index}
+              locked={locked}
+              usage={pokemonData[randomPokemon]["usage"]["weighted"]}
+              handleImageClick={handleImageClick} />
+          ))}
+        </div>
+        {gameOver && <ResultComponent hasWon={hasWon} roomScore={roomScore} playerUsernames={playerUsernames}/>}
+        
+      </div>
     </>
   )
 }
