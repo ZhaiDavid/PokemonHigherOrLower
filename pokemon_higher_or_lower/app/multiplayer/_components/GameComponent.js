@@ -10,7 +10,7 @@ import "./GameComponent.css"
 import ResultComponent from "./ResultComponent";
 
 
-export default function GameComponent({ startingPokemons, roomName, pokemonData, playerScore, roomScore, playerUsernames }) {
+export default function GameComponent({ startingPokemons, roomName, pokemonData, playerScore, roomScore, playerUsernames, format }) {
   const [pokemons, setPokemons] = useState(startingPokemons);
   // const [score, setScore] = useState(playerScore);
   // when it's locked, we will also show a pop-up notif for when 
@@ -128,6 +128,7 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
               index={index}
               locked={locked}
               usage={pokemonData[randomPokemon]["usage"]["weighted"]}
+              format = {format}
               handleImageClick={handleImageClick} />
           ))}
         </div>

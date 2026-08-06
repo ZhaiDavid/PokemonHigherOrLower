@@ -3,13 +3,14 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from 'next/navigation';
 import { socket } from "../../socket/socketClient";
 
-import { modesList } from "../../constants/modes";
+import { formatsList } from "../../constants/formats.js";
 import MatchmakeLoader from "./_components/MatchmakeLoader";
 
 import "./page.css"
 
 export default function Page() {
   const[userName, setUserName] = useState("");
+  const[format, setFormat] = useState("");
   const[searchClicked, setSearchClicked] = useState(false);
   const[inQueue, setInQueue] = useState(false);
   const router = useRouter();
@@ -29,7 +30,7 @@ export default function Page() {
 
   useEffect(() => {
       function handle_match_found(roomName) {
-        const query = new URLSearchParams({ roomName, userName }).toString();
+        const query = new URLSearchParams({ roomName, userName, format }).toString();
         router.push(`/multiplayer?${query}`);
       };
       
@@ -44,15 +45,16 @@ export default function Page() {
           socket.off("match-search", {});
         });
       };
-  }, [router, userName]);
+  }, [router, userName, format]);
 
   function submit(event) {
     event.preventDefault();
     const data = new FormData(event.target);
-    const format = data.get('mode')
+    setFormat(data.get('format'));
 
     if (!searchClicked) {
-      socket.emit("match-search", format, {});
+      console.log(format);
+      socket.emit("match-search", data.get('format'), {});
       setInQueue(true);
     }
   }
@@ -69,9 +71,9 @@ export default function Page() {
                 setUserName(event.target.value);
               }} />
             <div className="mt-3 flex flex-col items-center">
-              <label className="" htmlFor="modes">Choose a Mode</label>
-              <select className="mt-2" id="modes" name="mode">
-                {modesList.map((element, index) => (
+              <label className="" htmlFor="formats">Choose a Format</label>
+              <select className="mt-2" id="formats" name="format">
+                {formatsList.map((element, index) => (
                   <option key={element} value={element}>{element}</option>
                 ))}
               </select>
@@ -81,6 +83,7 @@ export default function Page() {
           </button>
           </form>}
           {inQueue && <MatchmakeLoader/>}
+          {inQueue && format}
         </div>
       </div>
     </div>

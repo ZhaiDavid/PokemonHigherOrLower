@@ -3,7 +3,7 @@ import next from "next";
 import { Server } from "socket.io";
 
 import Queue from './Queue.js'
-import { modesList } from "./app/constants/modes.js";
+import { formatsList } from "./app/constants/formats.js";
 
 const rooms = new Map();
 const user_socket = new Map(); // maps every user_id in queue to its socket
@@ -64,8 +64,7 @@ function changeRoomPokemon(roomName, gameTimerMap, io) {
       })
 
       //  TODO: Remove room and usersockets
-    }
-    else {
+    } else {
       io.to(roomName).emit("room-update", {
         pokemons: roomState.pokemons,
         questionNumber: roomState.questionNumber
@@ -80,7 +79,7 @@ app.prepare().then(() => {
 
   // Separate map of queues for each format, so they players can queue up for their desired format
   const queueMap = new Map();
-  modesList.forEach((format, index) => {
+  formatsList.forEach((format, index) => {
     queueMap[format] = new Queue();
   })
 
@@ -126,9 +125,10 @@ app.prepare().then(() => {
     })
 
     // Handling Room Joining
-    socket.on("joined-room", async ({roomName, userName, numPokemon}) => {
+    socket.on("joined-room", async ({roomName, userName, numPokemon, format}) => {
       const base_url = "https://pkmn.github.io/smogon/data";
-      const usage_url = `${base_url}/stats/gen9ou.json`;
+      const usage_url = `${base_url}/stats/${format}.json`;
+      console.log(usage_url);
       const data = await fetch(usage_url);
       const readData = await data.json();
       const pokemonData = readData['pokemon'];

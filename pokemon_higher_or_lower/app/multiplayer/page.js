@@ -15,13 +15,15 @@ export default function Page () {
   const [playerUsernames, setPlayerUserNames] = useState(null)
   const roomName = params.get("roomName");
   const userName = params.get("userName");
+  const format = params.get("format");
 
   // for some reason useEffect runs twice
   useEffect(() => {
     socket.emit("joined-room", {
       roomName: roomName,
       userName: userName,
-      numPokemon: 2
+      numPokemon: 2,
+      format: format
     });
 
     const handle_room_state = ({pokemons, pokemonData, playerScore, roomScores, playerUsernames}) => {
@@ -50,6 +52,7 @@ export default function Page () {
         playerScore = {playerScore}
         roomScore = {roomScores}
         playerUsernames={playerUsernames}
+        format={format}
       />}
     </>
   )
