@@ -205,11 +205,17 @@ app.prepare().then(() => {
         function changePokemonInterval() {
           changeRoomPokemon(roomName, gameTimerMap, io);
         }
+
+       if (!gameTimerMap.has(roomName)) {
         setTimeout(
           () => {
             changePokemonInterval();
             gameTimerMap.set(roomName, setInterval(changePokemonInterval, 6000));
           }, 5000);
+       }
+       gameTimerMap.set(roomName, 0); // filler, just to indicate that someone has joined
+
+        
       }
     })
 
