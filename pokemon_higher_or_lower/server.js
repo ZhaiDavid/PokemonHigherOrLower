@@ -64,6 +64,17 @@ function changeRoomPokemon(roomName, gameTimerMap, io) {
       })
 
       //  TODO: Remove room and usersockets
+      // Removing user sockets from map after the room has been closed
+      roomState.playerIDs.forEach((id) => {
+        if (user_socket.get(id)) {
+          user_socket.delete(id);
+        }
+      })
+      if (rooms.has(roomName)) {
+        rooms.delete(roomName);
+      }
+
+
     } else {
       io.to(roomName).emit("room-update", {
         pokemons: roomState.pokemons,
