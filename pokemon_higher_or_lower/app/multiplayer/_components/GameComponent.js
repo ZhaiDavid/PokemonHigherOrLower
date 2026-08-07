@@ -24,6 +24,9 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
   const [gameOver, setGameOver] = useState(false);
   const [hasWon, setHasWon] = useState(false);
 
+  const [usernames, setUsernames] = useState(new Map(playerUsernames));
+  const [scores, setScores] = useState(new Map(roomScore));
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       setSeconds(prev => locked ? prev : prev - 1);
@@ -43,7 +46,7 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
         setLocked(false);
         setPokemons(pokemons);
       }, 1000
-      );  
+      );
     }
 
     socket.on("room-update", handleRoomUpdate);
@@ -72,6 +75,16 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
       setHasWon(true);
     }
 
+    const handleScoreUpdate = ({ playerUsernames, roomScore }) => {
+      setUsernames(new Map(Object.entries(playerUsernames)));
+      setScores(new Map(Object.entries(roomScore)));
+      console.log("SCORES");
+      console.log(scores);
+    }
+
+    socket.on("score-update", handleScoreUpdate);
+
+
     socket.on("user-submitted", handleUserSubmitted);
     socket.on("game-over", handle_gameover);
     socket.on("win", handle_win);
@@ -82,6 +95,7 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
       socket.off("user-submitted", handleUserSubmitted);
       socket.off("game-over", handle_gameover);
       socket.off("win", handle_win);
+      socket.off("score-update", handleScoreUpdate);
     }
   }, [])
 
@@ -106,16 +120,16 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
 
   return (
     <>
-        <div className="game-component">
-          {showNotif && <SubmitNotification user = {lastUserSubmitted}
-                                       correct = {lastCorrect}/>}
-          <div className = "timer">
-              {seconds}
-          </div>
-          <div className="score-container px-4 py-2 text-lg font bold">
-            {/* <p className="p-2 bg-black">Score: {score}</p> */}
+      <div className="game-component">
+        {showNotif && <SubmitNotification user={lastUserSubmitted}
+          correct={lastCorrect} />}
+        <div className="timer">
+          {seconds}
+        </div>
+        <div className="score-container px-4 py-2 text-lg font bold">
+          {/* <p className="p-2 bg-black">Score: {score}</p> */}
 
-          <Scoreboard userNames={playerUsernames} roomScores={roomScore} />
+          <Scoreboard userNames={usernames} roomScores={scores} />
         </div>
         <div className="question-indicator px-4 py-2">
           <QuestionIndicator questionNumber={questionNumber} />
@@ -131,8 +145,8 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
               handleImageClick={handleImageClick} />
           ))}
         </div>
-        {gameOver && <ResultComponent hasWon={hasWon} roomScore={roomScore} playerUsernames={playerUsernames}/>}
-        
+        {gameOver && <ResultComponent hasWon={hasWon} roomScore={scores} playerUsernames={usernames} />}
+
       </div>
     </>
   )

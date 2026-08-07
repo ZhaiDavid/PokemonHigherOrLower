@@ -186,13 +186,13 @@ app.prepare().then(() => {
 
       // Emitting Score Update to each room upon joining to display all users on scoreboard
       if (roomState.playerIDs.size > 1) {
-        console.log("MORE THAN 2 PLAYERS");
+        console.log("2+ PLAYERS");
         roomState.playerIDs.forEach((id) => {
           if (user_socket.get(id)) {
             console.log("SENT " + id);
             console.log(roomState.playerScores);
             user_socket.get(id).emit("score-update", {
-              score: roomState.playerScores.get(user_id),
+              playerUsernames: Object.fromEntries(roomState.playerUsernames),
               roomScore: Object.fromEntries(roomState.playerScores)
             })
           }
@@ -240,7 +240,7 @@ app.prepare().then(() => {
         if (user_socket.get(id)) {
           console.log("SENT " + id);
           user_socket.get(id).emit("score-update", {
-            score: roomState.playerScores.get(user_id),
+            playerUsernames: Object.fromEntries(roomState.playerUsernames),
             roomScore: Object.fromEntries(roomState.playerScores)
           })
         }

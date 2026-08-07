@@ -1,11 +1,17 @@
 import "./ResultComponent.css";
 
 export default function ResultComponent({ hasWon, roomScore, playerUsernames }) {
-    const usernames = new Map(playerUsernames);
-    const scores = new Map(roomScore);
+    // TODO: I think the issue here is that this code only runs once on component mount
 
-    console.log(usernames);
-    console.log(scores);
+    // const [usernames, setUsernames] = useState(new Map(playerUsernames));
+    // const [scores, setScores] = useState(new Map(roomScore));
+
+    // console.log(usernames);
+    // console.log(roomScore);
+
+    // useEffect(() => {
+
+    // }, [])
 
     return (
         <div className="result-component w-md h-75 absolute m-auto inset-0 z-10 bg-white rounded-lg">
@@ -13,10 +19,10 @@ export default function ResultComponent({ hasWon, roomScore, playerUsernames }) 
                 {hasWon && <h1>Victory!</h1>}
                 {!hasWon && <h1>Defeat!</h1>}
             </div>
-            {Array.from(usernames.keys()).map((id, index) => (
+            {Array.from(playerUsernames.keys()).map((id, index) => (
                 <div className="score-content-container" key={index}>
-                    <p className="content-username">{usernames.get(id)}</p>
-                    <p className="content-score"> : {scores.get(id)}</p>
+                    <p className="content-username">{playerUsernames.get(id)}</p>
+                    <p className="content-score"> : {roomScore.get(id)}</p>
                 </div>
             ))}
         </div>
