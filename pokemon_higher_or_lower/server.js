@@ -209,8 +209,10 @@ app.prepare().then(() => {
        if (!gameTimerMap.has(roomName)) {
         setTimeout(
           () => {
-            changePokemonInterval();
-            gameTimerMap.set(roomName, setInterval(changePokemonInterval, 6000));
+            if (gameTimerMap.get(roomName) == 0) {
+              changePokemonInterval();
+              gameTimerMap.set(roomName, setInterval(changePokemonInterval, 6000));
+            }
           }, 5000);
        }
        gameTimerMap.set(roomName, 0); // filler, just to indicate that someone has joined
@@ -234,8 +236,7 @@ app.prepare().then(() => {
         answeredCorrectly: answeredCorrectly
       })
 
-      console.log(user_id);
-      console.log(answeredCorrectly);
+      console.log("someone answered");
 
 
       // socket.emit("score-update", {
