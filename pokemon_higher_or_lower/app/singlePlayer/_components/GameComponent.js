@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState} from "react";
-import PokemonCard from "../../../_components/PokemonCard";
+import PokemonCard from "../../_components/PokemonCard";
 
 import './GameComponent.css'
 
