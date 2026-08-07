@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from 'next/navigation';
 import { redirect } from "next/navigation";
 
-import { modesList } from "../../constants/modes";
+import { formatsList } from "../../constants/modes";
 
 import "./page.css"
 
@@ -22,7 +22,7 @@ export default function Page() {
           <form action={submit} className="flex flex-col items-center">
             <label className="" htmlFor="modes">Choose a Mode</label>
             <select className="mt-2" id="modes" name="modes">
-              {modesList.map((element, index) => (
+              {formatsList.map((element, index) => (
                 <option key={element} value={element}>{element}</option>
               ))}
             </select>

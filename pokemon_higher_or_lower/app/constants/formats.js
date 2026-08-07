@@ -1,6 +1,6 @@
 //TODO: Check if these string all actually give valid API responses
 
-export const modesList = [
+export const formatsList = [
     "gen1ou",
     "gen2ou",
     "gen3ou",

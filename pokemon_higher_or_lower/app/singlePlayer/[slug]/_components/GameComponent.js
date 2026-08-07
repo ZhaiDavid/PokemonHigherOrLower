@@ -5,7 +5,7 @@ import PokemonCard from "../../../_components/PokemonCard";
 import './GameComponent.css'
 
 
-export default function GameComponent ({pokemonKeys, pokemon, size}) {
+export default function GameComponent ({pokemonKeys, pokemon, size, format}) {
     useEffect(() => {
         setRandomPokemons(generateRandomPokemons());
     }, [pokemonKeys]);
@@ -75,7 +75,8 @@ export default function GameComponent ({pokemonKeys, pokemon, size}) {
                             index={index} 
                             locked={locked}
                             usage = {pokemon[randomPokemon]["usage"]["weighted"]}
-                            handleImageClick = {handleImageClick} />
+                            format = {format} 
+                            handleImageClick = {handleImageClick}/>
                     ))}
                 </div>
             </div>
