@@ -44,8 +44,9 @@ export default function Page() {
     <>
       <div className="box">
         <div className="content-container">
-          {!createdRoom?(
             <div className="form-container p-10 rounded-md">
+              {!createdRoom?(
+               <>
               <form className="flex flex-col items-center">
                 <input type="text"
                   placeholder="type your name..."
@@ -54,24 +55,25 @@ export default function Page() {
                     setUserName(event.target.value);
                   }} />
                 <div className="mt-3 flex flex-col items-center">
-                <label className="" htmlFor="formats">Choose a Format</label>
-                <select className="mt-2" id="formats" name="format"
-                        onChange={(event)=> {
-                          setFormat(event.target.value);
-                        }}>
-                  {formatsList.map((element, index) => (
-                    <option key={index} value={element}>{element}</option>
-                  ))}
-                </select>
-              </div>
+                  <label className="" htmlFor="formats">Choose a Format</label>
+                  <select className="mt-2" id="formats" name="format"
+                          onChange={(event)=> {
+                            setFormat(event.target.value);
+                          }}>
+                    {formatsList.map((element, index) => (
+                      <option key={index} value={element}>{element}</option>
+                    ))}
+                  </select>
+                </div>
               </form>
               <button className="mt-3 p-3 rounded-sm bg-blue-300 hover:bg-[#56579A] hover:text-white" onClick={submit}>
                 Submit
               </button>
-            </div>): 
-            (<button onClick={() => navigator.clipboard.writeText(`localhost:3000/multiplayer?roomName=${roomName}&userName=${userName}&format=${format}`)}>
+              </>): 
+              (<button onClick={() => navigator.clipboard.writeText(`localhost:3000/multiplayer?roomName=${roomName}&userName=${userName}&format=${format}`)}>
               Copy Party Link
-            </button>)}
+              </button>)}
+            </div>
         </div>
       </div>
     </>
