@@ -13,6 +13,8 @@ export default function Page () {
   const [pokemonData, setPokemonData] = useState([]);
   const [roomScores, setRoomScores] = useState(null);
   const [playerUsernames, setPlayerUserNames] = useState(null)
+  const [userID, setUserID] = useState(null);
+
   const roomName = params.get("roomName");
   const userName = params.get("userName");
   const format = params.get("format");
@@ -34,10 +36,18 @@ export default function Page () {
       setPlayerUserNames(playerUsernames);
     };
 
+    const handleUserID = ({userID}) => {
+      console.log("RECEIVED");
+      setUserID(userID);
+    }
+    
+
     socket.on("room-state", handle_room_state);
+    socket.on("user-id", handleUserID);
 
     return () => {
         socket.off("room-state", handle_room_state);
+        socket.off("user-id", handleUserID);
     };
   }, []);
 
@@ -52,6 +62,7 @@ export default function Page () {
         roomScore = {roomScores}
         playerUsernames={playerUsernames}
         format={format}
+        userID={userID}
       />}
     </>
   )
