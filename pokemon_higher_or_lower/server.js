@@ -7,6 +7,7 @@ import { formatsList } from "./app/constants/formats.js";
 
 const rooms = new Map();
 const user_socket = new Map(); // maps every user_id in queue to its socket
+const user_routes = new Map(); // maps every user_id to it's game query if it is in game
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
 const port = 3000;
@@ -23,6 +24,9 @@ function createRoomID(id1, id2) {
 // Separating into functions so that I can reuse
 function changeRoomPokemon(roomName, gameTimerMap, io) {
     const roomState = rooms.get(roomName);
+    if (!roomState) return;
+
+
     const set = new Set();
       while (set.size < roomState.numPokemon) {
       set.add(Math.floor(Math.random() * roomState.pokemonKeys.length));
@@ -66,8 +70,11 @@ function changeRoomPokemon(roomName, gameTimerMap, io) {
       //  TODO: Remove room and usersockets
       // Removing user sockets from map after the room has been closed
       roomState.playerIDs.forEach((id) => {
-        if (user_socket.get(id)) {
+        if (user_socket.has(id)) {
           user_socket.delete(id);
+        }
+        if (user_routes.has(id)) {
+          user_routes.delete(id);
         }
       })
       if (rooms.has(roomName)) {
@@ -149,6 +156,9 @@ app.prepare().then(() => {
       // Also setting the socket map here in case the user doesn't join through the queue
       user_socket.set(user_id, socket);
 
+      // Setting the query in the routes map
+      user_routes.set(user_id, new URLSearchParams({ roomName, userName, format }).toString());
+
       const set = new Set();
       while (set.size < numPokemon) {
         set.add(Math.floor(Math.random() * pokemonKeys.length));
@@ -182,6 +192,12 @@ app.prepare().then(() => {
         roomState.playerUsernames.set(user_id, username);
       }
 
+      // Send user their userID
+      socket.emit("user-id", {
+        userID: user_id
+      });
+      console.log(`${user_id} emitted`)
+
 
       socket.join(roomName);
       console.log(`${user_id} has joined the room`);
@@ -197,10 +213,10 @@ app.prepare().then(() => {
 
       // Emitting Score Update to each room upon joining to display all users on scoreboard
       if (roomState.playerIDs.size > 1) {
-        console.log("2+ PLAYERS");
+        // console.log("2+ PLAYERS");
         roomState.playerIDs.forEach((id) => {
           if (user_socket.get(id)) {
-            console.log("SENT " + id);
+            // console.log("SENT " + id);
             console.log(roomState.playerScores);
             user_socket.get(id).emit("score-update", {
               playerUsernames: Object.fromEntries(roomState.playerUsernames),
@@ -229,6 +245,15 @@ app.prepare().then(() => {
        gameTimerMap.set(roomName, 0); // filler, just to indicate that someone has joined
 
         
+      }
+    })
+
+    // Handling Check to see if you are already in game
+    socket.on("in-match-check", () => {
+      if (user_routes.has(user_id)) {
+        socket.emit("already-in-match", {
+          query: user_routes.get(user_id)
+        })
       }
     })
 

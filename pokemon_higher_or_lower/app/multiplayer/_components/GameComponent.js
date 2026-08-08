@@ -24,8 +24,10 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
   const [gameOver, setGameOver] = useState(false);
   const [hasWon, setHasWon] = useState(false);
 
+  // Variables for score tracking
   const [usernames, setUsernames] = useState(new Map(playerUsernames));
   const [scores, setScores] = useState(new Map(roomScore));
+  const [userID, setUserID] = useState(null);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -81,13 +83,18 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
       console.log("SCORES");
       console.log(scores);
     }
-
-    socket.on("score-update", handleScoreUpdate);
-
+    
+    const handleUserID = ({userID}) => {
+      console.log("RECEIVED");
+      setUserID(userID);
+    }
 
     socket.on("user-submitted", handleUserSubmitted);
     socket.on("game-over", handle_gameover);
     socket.on("win", handle_win);
+    socket.on("score-update", handleScoreUpdate);
+    socket.on("user-id", handleUserID);
+
 
     return () => {
       socket.off("room-update", handleRoomUpdate);
@@ -96,6 +103,7 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
       socket.off("game-over", handle_gameover);
       socket.off("win", handle_win);
       socket.off("score-update", handleScoreUpdate);
+      socket.off("user-id", handleUserID);
     }
   }, [])
 
@@ -129,7 +137,7 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
         <div className="score-container px-4 py-2 text-lg font bold">
           {/* <p className="p-2 bg-black">Score: {score}</p> */}
 
-          <Scoreboard userNames={usernames} roomScores={scores} />
+          <Scoreboard userNames={usernames} roomScores={scores} userID={userID}/>
         </div>
         <div className="question-indicator px-4 py-2">
           <QuestionIndicator questionNumber={questionNumber} />
@@ -146,7 +154,7 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
               handleImageClick={handleImageClick} />
           ))}
         </div>
-        {gameOver && <ResultComponent hasWon={hasWon} roomScore={scores} playerUsernames={usernames} />}
+        {gameOver && <ResultComponent hasWon={hasWon} roomScore={scores} playerUsernames={usernames} userID={userID}  />}
 
       </div>
     </>

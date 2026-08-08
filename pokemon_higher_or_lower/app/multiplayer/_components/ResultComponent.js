@@ -1,6 +1,6 @@
 import "./ResultComponent.css";
 
-export default function ResultComponent({ hasWon, roomScore, playerUsernames }) {
+export default function ResultComponent({ hasWon, roomScore, playerUsernames, userID }) {
     // TODO: I think the issue here is that this code only runs once on component mount
 
     // const [usernames, setUsernames] = useState(new Map(playerUsernames));

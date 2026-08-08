@@ -40,7 +40,7 @@ export default function Page() {
               </select>
             </div>
             </form>
-            <button className="mt-2" onClick={submit}>
+            <button className="mt-3 p-3 rounded-sm bg-blue-300 hover:bg-[#56579A] hover:text-white" onClick={submit}>
               Submit
             </button>
           </div>
