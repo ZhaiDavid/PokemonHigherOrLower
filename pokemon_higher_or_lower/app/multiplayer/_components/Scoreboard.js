@@ -11,9 +11,9 @@ export default function Scoreboard({ userNames, roomScores, userID }) {
             <div className="board-scores">
             {Array.from(userNames.keys()).map((id, index) => (
                 <div className="score-content-container" key={index}>
-                    <p className="content-username">{userNames.get(id)}</p>
+                    {(id == userID) && <p className="content-username">{userNames.get(id)} (You)</p>}
+                    {(id !== userID) && <p className="content-username">{userNames.get(id)}</p>}
                     <p className="content-score"> : {roomScores.get(id)}</p>
-                    {(id == userID) && <p>(You)</p>}
                 </div>
             ))}
             </div>

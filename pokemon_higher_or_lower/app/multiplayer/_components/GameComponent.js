@@ -10,7 +10,7 @@ import "./GameComponent.css"
 import ResultComponent from "./ResultComponent";
 
 
-export default function GameComponent({ startingPokemons, roomName, pokemonData, playerScore, roomScore, playerUsernames, format }) {
+export default function GameComponent({ startingPokemons, roomName, pokemonData, playerScore, roomScore, playerUsernames, format, userID }) {
   const [pokemons, setPokemons] = useState(startingPokemons);
   // const [score, setScore] = useState(playerScore);
   // when it's locked, we will also show a pop-up notif for when 
@@ -27,7 +27,6 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
   // Variables for score tracking
   const [usernames, setUsernames] = useState(new Map(playerUsernames));
   const [scores, setScores] = useState(new Map(roomScore));
-  const [userID, setUserID] = useState(null);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -83,17 +82,11 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
       console.log("SCORES");
       console.log(scores);
     }
-    
-    const handleUserID = ({userID}) => {
-      console.log("RECEIVED");
-      setUserID(userID);
-    }
 
     socket.on("user-submitted", handleUserSubmitted);
     socket.on("game-over", handle_gameover);
     socket.on("win", handle_win);
     socket.on("score-update", handleScoreUpdate);
-    socket.on("user-id", handleUserID);
 
 
     return () => {
@@ -103,7 +96,6 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
       socket.off("game-over", handle_gameover);
       socket.off("win", handle_win);
       socket.off("score-update", handleScoreUpdate);
-      socket.off("user-id", handleUserID);
     }
   }, [])
 
