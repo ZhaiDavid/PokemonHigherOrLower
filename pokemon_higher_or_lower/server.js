@@ -41,6 +41,7 @@ function changeRoomPokemon(roomName, gameTimerMap, io) {
     if (roomState.questionNumber > 15) {
       if (gameTimerMap.has(roomName)) {
         clearInterval(gameTimerMap.get(roomName));
+        gameTimerMap.delete(roomName);
       }
 
       // Check which ID has the most people
@@ -178,6 +179,15 @@ app.prepare().then(() => {
       }
 
       const roomState = rooms.get(roomName);
+
+      // Do not allow extra player to play if the room size is already 2 or more
+      if (roomState.playerIDs.size >= 2 && !roomState.playerIDs.has(user_id)) {
+        socket.emit("game-full");
+        return;
+      }
+      else {
+        console.log(roomState.playerIDs);
+      }
 
       if (!roomState.playerIDs.has(user_id)) {
           roomState.playerIDs.add(user_id);

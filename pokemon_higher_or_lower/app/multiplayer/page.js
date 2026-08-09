@@ -19,6 +19,8 @@ export default function Page () {
   const userName = params.get("userName");
   const format = params.get("format");
 
+  const [gameFull, setGameFull] = useState(false);
+
   // for some reason useEffect runs twice
   useEffect(() => {
     socket.emit("joined-room", {
@@ -37,15 +39,19 @@ export default function Page () {
     };
 
     const handleUserID = ({userID}) => {
-      console.log("RECEIVED");
       setUserID(userID);
     }
     
+    const handleGameFull = () => {
+      setGameFull(true);
+    }
 
+    socket.on("game-full", handleGameFull);
     socket.on("room-state", handle_room_state);
     socket.on("user-id", handleUserID);
 
     return () => {
+        socket.off("game-full", handleGameFull);
         socket.off("room-state", handle_room_state);
         socket.off("user-id", handleUserID);
     };
@@ -54,7 +60,7 @@ export default function Page () {
 
   return (
     <>
-      {pokemons && <GameComponent
+      {pokemons && !gameFull && <GameComponent
         startingPokemons = {pokemons}
         pokemonData = {pokemonData}
         roomName = {roomName}
@@ -64,6 +70,7 @@ export default function Page () {
         format={format}
         userID={userID}
       />}
+      {gameFull && <div className='flex justify-center items-center flex-grow-1 text-4xl md:text-5xl font-bold'>Game Full</div>}
     </>
   )
 }

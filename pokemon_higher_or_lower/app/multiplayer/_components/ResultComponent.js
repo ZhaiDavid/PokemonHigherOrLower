@@ -14,17 +14,20 @@ export default function ResultComponent({ hasWon, roomScore, playerUsernames, us
     // }, [])
 
     return (
-        <div className="result-component w-md h-75 absolute m-auto inset-0 z-10 bg-white rounded-lg">
-            <div className="text-4xl md:text-5xl">
+        <div className="result-component w-sm h-60 absolute m-auto inset-0 z-10 bg-white rounded-lg">
+            <div className="text-4xl md:text-5xl font-bold mb-1">
                 {hasWon && <h1>Victory!</h1>}
                 {!hasWon && <h1>Defeat!</h1>}
             </div>
-            {Array.from(playerUsernames.keys()).map((id, index) => (
-                <div className="score-content-container" key={index}>
-                    <p className="content-username">{playerUsernames.get(id)}</p>
-                    <p className="content-score"> : {roomScore.get(id)}</p>
-                </div>
-            ))}
+            
+                {Array.from(playerUsernames.keys()).map((id, index) => (
+                    <div className="score-content-container mt-1" key={index}>
+                        {(id == userID) && <p className="content-username">{playerUsernames.get(id)} (You)</p>}
+                        {(id !== userID) && <p className="content-username">{playerUsernames.get(id)}</p>}
+                        <p className="content-score"> : {roomScore.get(id)}</p>
+                    </div>
+                ))}
+            
         </div>
     )
 }
