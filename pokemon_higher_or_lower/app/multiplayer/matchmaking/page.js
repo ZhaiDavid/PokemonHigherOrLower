@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from 'next/navigation';
 import { socket } from "../../socket/socketClient";
+import { RegExpMatcher, TextCensor, englishDataset, englishRecommendedTransformers } from 'obscenity';
 
 import { formatsList } from "../../constants/formats.js";
 import MatchmakeLoader from "./_components/MatchmakeLoader";
@@ -14,6 +15,11 @@ export default function Page() {
   const [searchClicked, setSearchClicked] = useState(false);
   const [inQueue, setInQueue] = useState(false);
   const router = useRouter();
+
+  const matcher = new RegExpMatcher({
+    ...englishDataset.build(),
+    ...englishRecommendedTransformers,
+  });
 
   useEffect(() => {
     socket.emit("in-matchmaking", {});
@@ -83,7 +89,12 @@ export default function Page() {
               placeholder="type your username..."
               className="text-center"
               onChange={(event) => {
-                setUserName(event.target.value);
+                if (matcher.hasMatch(event.target.value)) {
+                  setUserName("Anonymous");
+                }
+                else {
+                  setUserName(event.target.value);
+                }
               }} />
             <div className="mt-3 flex flex-col items-center">
               <label className="" htmlFor="formats">Choose a Format</label>
