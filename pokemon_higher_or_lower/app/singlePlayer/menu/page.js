@@ -11,7 +11,7 @@ export default function Page() {
 
   function submit(formData) {
     const format = formData.get('format');
-    router.push(`/singlePlayer?format=${format}`);
+    router.push(`/singleplayer?format=${format}`);
   }
 
   return (

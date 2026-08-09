@@ -71,7 +71,7 @@ export default function Page() {
                   Submit
                 </button>
               </>) :
-              (<button className="p-2 rounded-lg bg-blue-300 hover:bg-[#56579A] hover:text-white" onClick={() => navigator.clipboard.writeText(`localhost:3000/multiplayer?roomName=${roomName}&userName=${userName}&format=${format}`)}>
+              (<button className="p-2 rounded-lg bg-blue-300 hover:bg-[#56579A] hover:text-white" onClick={() => navigator.clipboard.writeText(`${window.location.origin}/multiplayer/join-room?roomName=${roomName}&format=${format}`)}>
                 Copy Party Link
               </button>)}
           </div>

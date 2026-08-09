@@ -30,7 +30,7 @@ export default function MainNav() {
                     <DropdownMenuContent>
                         <DropdownMenuGroup>
                             <DropdownMenuItem>
-                                <Link href="/singlePlayer/menu">
+                                <Link href="/singleplayer/menu">
                                     Single-player
                                 </Link>
                             </DropdownMenuItem>

@@ -46,7 +46,7 @@ export default function MobileNav() {
                             <DropdownMenuContent>
                                 <DropdownMenuGroup>
                                     <DropdownMenuItem>
-                                        <Link href="/singlePlayer/menu">
+                                        <Link href="/singleplayer/menu">
                                             Single-player
                                         </Link>
                                     </DropdownMenuItem>
