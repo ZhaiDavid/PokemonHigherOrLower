@@ -14,7 +14,7 @@ export default function ResultComponent({ hasWon, roomScore, playerUsernames, us
     // }, [])
 
     return (
-        <div className="result-component w-sm h-60 absolute m-auto inset-0 z-10 bg-white rounded-lg">
+        <div className="result-component w-xs md:w-sm h-60 absolute m-auto inset-0 z-10 bg-white rounded-lg">
             <div className="text-4xl md:text-5xl font-bold mb-1">
                 {hasWon && <h1>Victory!</h1>}
                 {!hasWon && <h1>Defeat!</h1>}
