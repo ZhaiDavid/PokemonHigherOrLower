@@ -35,10 +35,6 @@ export default function Page() {
     });
   }
 
-  function copyText() {
-    navigator.clipboard.writeText("some text to copy");
-  }
-
   // TODO: Have to change some logic to figure out how we work out modes for this?
   return (
     <>
@@ -70,7 +66,7 @@ export default function Page() {
                 Submit
               </button>
               </>): 
-              (<button onClick={() => navigator.clipboard.writeText(`localhost:3000/multiplayer?roomName=${roomName}&userName=${userName}&format=${format}`)}>
+              (<button onClick={() => navigator.clipboard.writeText(`localhost:3000/multiplayer/join-room?roomName=${roomName}&format=${format}`)}>
               Copy Party Link
               </button>)}
             </div>
