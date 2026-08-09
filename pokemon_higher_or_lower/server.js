@@ -17,9 +17,7 @@ const handler = app.getRequestHandler();
 
 // Temporary function to create unique room ids
 // https://stackoverflow.com/questions/66946239/how-to-create-an-unique-room-room-id-in-socket-io-for-two-users
-function createRoomID(id1, id2) {
-  return id1.toString(10).padStart(10, "0") + id2.toString(10).padStart(10, "0")
-}
+
 
 // Separating into functions so that I can reuse
 function changeRoomPokemon(roomName, gameTimerMap, io) {
@@ -125,15 +123,17 @@ app.prepare().then(() => {
         const user_id2 = queueMap[format].dequeue();
         const socket1 = user_socket.get(user_id1);
         const socket2 = user_socket.get(user_id2);
+
+        const roomId = crypto.randomUUID();
         
         socket1.emit("match-found", {
-          roomName: createRoomID(socket1.id, socket2.id),
+          roomName: roomId
         });
         socket2.emit("match-found", {
-          roomName: createRoomID(socket1.id, socket2.id),
+          roomName: roomId
         })
 
-        console.log(`Created room ${createRoomID(socket1.id, socket2.id)}`)
+        console.log(`Created room ${roomId}`)
       }
     })
 
@@ -147,7 +147,6 @@ app.prepare().then(() => {
     socket.on("joined-room", async ({roomName, userName, numPokemon, format}) => {
       const base_url = "https://pkmn.github.io/smogon/data";
       const usage_url = `${base_url}/stats/${format}.json`;
-      console.log(usage_url);
       const data = await fetch(usage_url);
       const readData = await data.json();
       const pokemonData = readData['pokemon'];
@@ -210,7 +209,6 @@ app.prepare().then(() => {
 
 
       socket.join(roomName);
-      console.log(`${user_id} has joined the room`);
 
       socket.emit("room-state", {
         pokemons: roomState.pokemons,
@@ -221,9 +219,14 @@ app.prepare().then(() => {
         questionNumber: roomState.questionNumber
       });
 
+      console.log(`room: ${roomName}`);
+      console.log(roomState.playerIDs);
+
       // Emitting Score Update to each room upon joining to display all users on scoreboard
       if (roomState.playerIDs.size > 1) {
-        // console.log("2+ PLAYERS");
+        console.log("2+ PLAYERS");
+        io.to(roomName).emit("ready-to-start-match");
+
         roomState.playerIDs.forEach((id) => {
           if (user_socket.get(id)) {
             // console.log("SENT " + id);
