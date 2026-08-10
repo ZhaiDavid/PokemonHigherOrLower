@@ -1,7 +1,5 @@
-"use client";
+import MenuComponent from "./singleplayer/_components/MenuComponent";
 
-import MenuPage from "./singleplayer/menu/page";
-
-export default function Page() {
-  return <MenuPage />;
+export default function Page({ searchParams }) {
+  return <MenuComponent searchParams={searchParams} />;
 }
