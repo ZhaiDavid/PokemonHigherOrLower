@@ -2,8 +2,9 @@ import GameComponent from "./GameComponent";
 
 import "./MenuComponent.css"
 
-export default async function MenuComponent({ searchParams }) {
-    const format = searchParams?.format;
+export default async function MenuComponent({searchParams}) {
+    const params = await searchParams;
+    const format = params.format;
 
     const base_url = "https://pkmn.github.io/smogon/data";
     const usage_url = `${base_url}/stats/${format}.json`;
