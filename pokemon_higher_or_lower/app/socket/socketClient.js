@@ -14,8 +14,14 @@ export function getUserId() {
   }
 }
 
-export const socket = io("http://localhost:3000", {
-  auth: {
-    userId: getUserId()
-  }
-});
+let socket;
+if (typeof window !== 'undefined') {
+  const socketUrl = window.location.origin;
+  socket = io(socketUrl, {
+    auth: {
+      userId: getUserId(),
+    },
+  });
+}
+
+export { socket };
