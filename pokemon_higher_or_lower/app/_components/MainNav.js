@@ -1,6 +1,5 @@
 // Navigation Bar made using tutorial from blog post https://dev.to/shaikathaque/responsive-navbar-in-react-using-shadcnui-and-tailwind-css-4jc9
 //TODO: Fix the navbar to correct structure
-
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {
@@ -21,8 +20,27 @@ import {
 export default function MainNav() {
     return (
         <>
-            <div className="mr-4 hidden gap-2 md:flex">
-                {/* Testing Dropdown Menu*/}
+            <div className="mr-4 hidden gap-2 md:flex md:justify-between">
+                <div className="flex ">
+                    <Button variant="link" className="text-white font-sans">
+                        <Link href="/singleplayer/menu">
+                            Single-player
+                        </Link>
+                    </Button>
+                    <Button variant="link" className="text-white font-sans">
+                        <Link href="/multiplayer/matchmaking">
+                            Find Match
+                        </Link>
+                    </Button>
+                    <Button variant="link" className="text-white font-sans">
+                        <Link href="/multiplayer/form">
+                            Form
+                        </Link>
+                    </Button>
+                </div>
+
+
+                {/* Testing Dropdown Menu
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="link" className="text-white font-sans">Game</Button>
@@ -50,7 +68,7 @@ export default function MainNav() {
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                     </DropdownMenuContent>
-                </DropdownMenu>
+                </DropdownMenu> */}
             </div>
         </>
     )
