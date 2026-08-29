@@ -15,11 +15,9 @@ const port = process.env.PORT || 3000;
 const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();
 
-// Temporary function to create unique room ids
-// https://stackoverflow.com/questions/66946239/how-to-create-an-unique-room-room-id-in-socket-io-for-two-users
-
-
 // Separating into functions so that I can reuse
+
+
 function changeRoomPokemon(roomName, gameTimerMap, io) {
     const roomState = rooms.get(roomName);
     if (!roomState) return;
@@ -83,6 +81,7 @@ function changeRoomPokemon(roomName, gameTimerMap, io) {
           user_routes.delete(id);
         }
       })
+
       if (rooms.has(roomName)) {
         rooms.delete(roomName);
       }
@@ -106,6 +105,10 @@ app.prepare().then(() => {
   formatsList.forEach((format, index) => {
     queueMap[format] = new Queue();
   })
+
+  setInterval(() => {
+    console.log(queueMap["gen1ou"])
+  }, 1000)
 
   const gameTimerMap = new Map();
 
@@ -288,7 +291,7 @@ app.prepare().then(() => {
       if (answeredCorrectly) { 
         newScore++;
       } else {
-        newScore--;
+        newScore-=2;
       }
 
       roomState.playerScores.set(user_id, newScore);
