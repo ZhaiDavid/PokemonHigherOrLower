@@ -23,6 +23,7 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
   const [seconds, setSeconds] = useState(5);
   const [gameOver, setGameOver] = useState(false);
   const [hasWon, setHasWon] = useState(false);
+  const [draw, setDraw] = useState(false);
 
   // Variables for score tracking
   const [usernames, setUsernames] = useState(new Map(playerUsernames));
@@ -76,6 +77,10 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
       setHasWon(true);
     }
 
+    const handle_draw = () => {
+      setDraw(true);
+    }
+
     const handleScoreUpdate = ({ playerUsernames, roomScore }) => {
       setUsernames(new Map(Object.entries(playerUsernames)));
       setScores(new Map(Object.entries(roomScore)));
@@ -86,6 +91,7 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
     socket.on("user-submitted", handleUserSubmitted);
     socket.on("game-over", handle_gameover);
     socket.on("win", handle_win);
+    socket.on("draw", handle_draw);
     socket.on("score-update", handleScoreUpdate);
 
 
@@ -95,6 +101,7 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
       socket.off("user-submitted", handleUserSubmitted);
       socket.off("game-over", handle_gameover);
       socket.off("win", handle_win);
+      socket.off("draw", handle_draw);
       socket.off("score-update", handleScoreUpdate);
     }
   }, [])
@@ -146,7 +153,7 @@ export default function GameComponent({ startingPokemons, roomName, pokemonData,
               handleImageClick={handleImageClick} />
           ))}
         </div>
-        {gameOver && <ResultComponent hasWon={hasWon} roomScore={scores} playerUsernames={usernames} userID={userID}  />}
+        {gameOver && <ResultComponent hasWon={hasWon} draw = {draw} roomScore={scores} playerUsernames={usernames} userID={userID}  />}
 
       </div>
     </>

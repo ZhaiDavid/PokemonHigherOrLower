@@ -42,23 +42,30 @@ function changeRoomPokemon(roomName, gameTimerMap, io) {
         gameTimerMap.delete(roomName);
       }
 
-      // Check which ID has the most people
-      let maxScoreID = "";
+      // Check which ID has the highest score
       let maxScore = Number.MIN_SAFE_INTEGER;
+      let draw = false;
 
       roomState.playerIDs.forEach((id) => {
         let score = roomState.playerScores.get(id);
         if (score > maxScore) {
           maxScore = score;
-          maxScoreID = id;
+          draw = false;
+        } else if (score === maxScore) {
+          draw = true;
         }
       })
 
       roomState.playerIDs.forEach((id) => {
+        let score = roomState.playerScores.get(id);
         if (user_socket.get(id)) {
           user_socket.get(id).emit("game-over");
-          if (id == maxScoreID) {
-            user_socket.get(id).emit("win");
+          if (score == maxScore) {
+            if (!draw) {
+              user_socket.get(id).emit("win");
+            } else {
+              user_socket.get(id).emit("draw");
+            }
           }
         }
         else {
@@ -276,9 +283,15 @@ app.prepare().then(() => {
       const roomState = rooms.get(roomName);
       changeRoomPokemon(roomName, gameTimerMap, io);
 
+      let newScore = roomState.playerScores.get(user_id)
+
       if (answeredCorrectly) { 
-        roomState.playerScores.set(user_id, roomState.playerScores.get(user_id)+1);
+        newScore++;
+      } else {
+        newScore--;
       }
+
+      roomState.playerScores.set(user_id, newScore);
 
       socket.to(roomName).emit("user-submitted", {
         user: user_id,
