@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "nodemon server.js",
     "build": "next build",
-    "start": "NODE_ENV=production node server.js"
+    "start": "NODE_ENV=production node server.js",
+    "load-test:rooms": "node scripts/load-test-rooms.js"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",

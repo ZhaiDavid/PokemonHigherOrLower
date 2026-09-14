@@ -11,11 +11,36 @@ const user_routes = new Map(); // maps every user_id to it's game query if it is
 const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
 const port = process.env.PORT || 3000;
+let format_data = new Map();
+let format_keys = new Map();
 // when using middleware `hostname` and `port` must be provided below
 const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();
 
-// Separating into functions so that I can reuse
+const base_url = "https://pkmn.github.io/smogon/data";
+
+async function loadData () {
+    const promises = formatsList.map(async (format) => {
+    const usage_url = `${base_url}/stats/${format}.json`;
+    const data = await fetch (usage_url);
+    if (!data.ok) {
+      throw new Error(format);
+    }
+    const readData = await data.json();
+    const pokemonData = readData['pokemon'];
+    const pokemonKeys = Object.keys(pokemonData).filter((name) => 
+                                      pokemonData[name]["usage"]["weighted"]*100 > 0.5);
+    return [[format, pokemonData], [format, pokemonKeys]];
+  });
+
+  const results = await Promise.all(promises);
+  
+  const format_data = new Map(results.map((x) => x[0]));
+  const format_keys = new Map(results.map((x) => x[1]));
+  return [format_data, format_keys];
+}
+
+
 
 
 function changeRoomPokemon(roomName, gameTimerMap, io) {
@@ -95,20 +120,27 @@ function changeRoomPokemon(roomName, gameTimerMap, io) {
     }
 }
 
-app.prepare().then(() => {
+app.prepare().then(async () => {
+  let data = await loadData();
+  format_data = data[0];
+  format_keys = data[1];
+}).then(() => {
+  console.log(Object.keys(format_data));
   const httpServer = createServer(handler);
 
   const io = new Server(httpServer);
 
   // Separate map of queues for each format, so they players can queue up for their desired format
   const queueMap = new Map();
-  formatsList.forEach((format, index) => {
+  formatsList.forEach((format) => {
     queueMap[format] = new Queue();
   })
 
+  // debugging
   setInterval(() => {
     console.log(queueMap["gen1ou"])
   }, 1000)
+  // .................
 
   const gameTimerMap = new Map();
 
@@ -155,13 +187,8 @@ app.prepare().then(() => {
 
     // Handling Room Joining
     socket.on("joined-room", async ({roomName, userName, numPokemon, format}) => {
-      const base_url = "https://pkmn.github.io/smogon/data";
-      const usage_url = `${base_url}/stats/${format}.json`;
-      const data = await fetch(usage_url);
-      const readData = await data.json();
-      const pokemonData = readData['pokemon'];
-      const pokemonKeys = Object.keys(pokemonData).filter((name) => 
-                                      pokemonData[name]["usage"]["weighted"]*100 > 0.5);
+      const pokemonData = format_data.get(format);
+      const pokemonKeys = format_keys.get(format);
 
       // Also setting the socket map here in case the user doesn't join through the queue
       user_socket.set(user_id, socket);
@@ -338,4 +365,12 @@ app.prepare().then(() => {
     .listen(port, () => {
       console.log(`> Ready on http://${hostname}:${port}`);
     });
-});
+})
+
+
+
+
+
+
+
+  
